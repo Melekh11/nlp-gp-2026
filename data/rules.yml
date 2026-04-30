@@ -1,13 +1,115 @@
 version: "3.1"
 
 rules:
-
-- rule: Say goodbye anytime the user says goodbye
+- rule: Start interview
   steps:
-  - intent: goodbye
-  - action: utter_goodbye
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
 
-- rule: Say 'I am a bot' anytime the user challenges
+- rule: Submit interview form
+  condition:
+    - active_loop: interview_form
   steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
+    - action: interview_form
+    - active_loop: null
+    - action: action_rank_candidate
+
+- rule: Stop interview
+  steps:
+    - intent: stop_interview
+    - action: utter_stop_interview
+    - action: action_deactivate_loop
+    - active_loop: null
+
+- rule: Goodbye
+  steps:
+    - intent: goodbye
+    - action: utter_goodbye
+
+- rule: Fallback
+  steps:
+    - intent: nlu_fallback
+    - action: utter_default
+
+- rule: Out of scope
+  steps:
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+
+- rule: Out of scope during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Repeat question
+  steps:
+    - intent: repeat_question
+    - action: action_repeat_question
+
+- rule: Skip question during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: skip_question
+    - action: action_skip_question
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Change answer
+  steps:
+    - intent: change_answer
+    - action: action_change_answer
+
+- rule: Change answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: change_answer
+    - action: action_change_answer
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Answer tie breaker
+  steps:
+    - intent: provide_tie_breaker
+    - action: action_apply_tie_breaker
+
+- rule: Ask roles
+  steps:
+    - intent: ask_roles
+    - action: utter_roles
+
+- rule: Ask process
+  steps:
+    - intent: ask_process
+    - action: utter_process
+
+- rule: Ask clarification
+  steps:
+    - intent: ask_clarification
+    - action: utter_clarification
+
+- rule: Ask clarification during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: ask_clarification
+    - action: utter_clarification
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Ask role details
+  steps:
+    - intent: ask_role_details
+    - action: action_show_role_details
+
+- rule: Ask next step
+  steps:
+    - intent: ask_next_step
+    - action: action_show_next_step

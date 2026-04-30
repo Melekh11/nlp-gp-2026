@@ -3,89 +3,362 @@ version: "3.1"
 nlu:
 - intent: greet
   examples: |
-    - hey
+    - привет
+    - добрый день
+    - здравствуйте
+    - приветствую
+    - добрый вечер
+    - хай
     - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - начнем?
 
 - intent: goodbye
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+    - пока
+    - до свидания
+    - спасибо, пока
+    - завершим
+    - больше ничего не нужно
+    - увидимся
+    - хорошего дня
 
 - intent: affirm
   examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+    - да
+    - верно
+    - правильно
+    - согласен
+    - подтверждаю
+    - все так
+    - ок
+    - хорошо
 
 - intent: deny
   examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+    - нет
+    - неверно
+    - не так
+    - не согласен
+    - неправильно
+    - скорее нет
+    - точно нет
 
-- intent: mood_great
+- intent: start_interview
   examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+    - начать интервью
+    - хочу пройти интервью
+    - давайте начнем собеседование
+    - запусти скрининг
+    - хочу пройти первичный отбор
+    - проведи интервью
+    - оцени меня как кандидата
+    - хочу понять какая роль мне подходит
+    - подбери мне позицию в ML-команде
 
-- intent: mood_unhappy
+- intent: stop_interview
   examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+    - останови интервью
+    - прекрати опрос
+    - хочу остановиться
+    - не хочу продолжать
+    - закончим интервью
+    - отменить собеседование
 
-- intent: bot_challenge
+- intent: provide_exp
   examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+    - у меня [3](experience_years) года опыта
+    - опыт [5](experience_years) лет
+    - работаю в аналитике [2](experience_years) года
+    - коммерческий опыт [1.5](experience_years) года
+    - около [7](experience_years) лет в IT
+    - опыта меньше года
+    - без опыта
+    - я junior, примерно [0.5](experience_years) года
+    - [10](experience_years) лет управляю проектами
+
+- intent: provide_skills
+  examples: |
+    - знаю [Python](skill), [SQL](skill) и [pandas](skill)
+    - работал с [Airflow](skill), [Spark](skill), [Kafka](skill)
+    - умею [Docker](skill), [Kubernetes](skill), [CI/CD](skill)
+    - мои навыки [ML](skill), [sklearn](skill), [PyTorch](skill)
+    - владею [Tableau](skill), [Power BI](skill), [Excel](skill)
+    - умею вести [stakeholders](skill), планировать сроки и риски
+    - знаю [A/B тесты](skill), продуктовые метрики и визуализацию
+    - занимался [MLOps](skill), мониторингом моделей и деплоем
+    - сильный [Python](skill), [SQL](skill), статистика и машинное обучение
+    - [Jira](skill), [Scrum](skill), коммуникации с бизнесом
+
+- intent: provide_projects
+  examples: |
+    - делал [ETL](project_type) пайплайны на Airflow и Spark для больших данных
+    - строил [дашборды](project_type) и анализировал продуктовые метрики
+    - обучал [ML модель](project_type) для прогнозирования оттока клиентов
+    - выводил модель в [production](project_type), настраивал Docker и мониторинг
+    - управлял [ML проектом](project_type), согласовывал требования и сроки
+    - делал учебный [pet project](project_type) по классификации текстов
+    - проект был [high](project_complexity) сложности, команда 8 человек
+    - проект простой, скорее [low](project_complexity)
+    - делал рекомендательную систему и API для инференса
+    - занимался хранилищем данных, витринами и quality checks
+
+- intent: provide_salary
+  examples: |
+    - хочу [250000](salary_amount) рублей
+    - ожидаю от [200000](salary_amount) до [300000](salary_amount)
+    - зарплата [180к](salary_amount)
+    - не меньше [220000](salary_amount)
+    - диапазон [250](salary_amount)-[320](salary_amount) тысяч
+    - рассчитываю на [300k](salary_amount)
+    - ожидания около [200000](salary_amount)
+    - готов обсуждать от [150к](salary_amount)
+
+- intent: provide_availability
+  examples: |
+    - готов выйти сразу
+    - могу начать сейчас
+    - доступен через две недели
+    - смогу выйти через месяц
+    - сейчас отрабатываю, буду свободен скоро
+    - готов не раньше чем через три месяца
+    - пока не готов выходить
+    - available now
+
+- intent: provide_education
+  examples: |
+    - высшее техническое образование
+    - бакалавриат по информатике
+    - магистратура по машинному обучению
+    - закончил экономику и курсы по аналитике данных
+    - профильного образования нет, учился сам
+    - есть курс по Data Science
+    - физмат, прикладная математика
+    - образование менеджмент, плюс курсы project management
+
+- intent: provide_english
+  examples: |
+    - английский [b2](english_level)
+    - уровень [c1](english_level)
+    - примерно [b1](english_level)
+    - слабый английский [a2](english_level)
+    - английского нет
+    - читаю документацию, говорю на [b2](english_level)
+    - свободный английский [c2](english_level)
+    - basic [a1](english_level)
+
+- intent: provide_work_format
+  examples: |
+    - хочу [remote](work_format)
+    - только [удаленка](work_format)
+    - подойдет [гибрид](work_format)
+    - готов в [офис](work_format)
+    - формат любой
+    - могу работать удаленно или гибридно
+    - предпочитаю офис
+    - любой формат подойдет
+
+- intent: provide_multiple_fields
+  examples: |
+    - у меня [3](experience_years) года опыта, знаю [Python](skill), [SQL](skill), хочу [remote](work_format), зарплата [250к](salary_amount)
+    - [5](experience_years) лет, [Airflow](skill), [Spark](skill), [Docker](skill), готов через месяц
+    - хочу роль [Data Scientist](target_role), знаю [Python](skill), [ML](skill), английский [b2](english_level)
+    - [2](experience_years) года аналитики, [SQL](skill), [Power BI](skill), зарплата от [180к](salary_amount)
+    - я [Project Manager](target_role), [7](experience_years) лет опыта, [Scrum](skill), [Jira](skill), доступен сразу
+    - [MLOps](target_role), [4](experience_years) года, [Kubernetes](skill), [CI/CD](skill), [Docker](skill)
+    - работал с [ETL](project_type), [Kafka](skill), [Airflow](skill), хочу от [280к](salary_amount)
+
+- intent: provide_tie_breaker
+  examples: |
+    - мне ближе пайплайны данных
+    - больше нравится эксплуатация моделей
+    - хочу заниматься ML-моделями
+    - предпочитаю BI и продуктовую аналитику
+    - сильнее управление командой и коммуникации
+    - я больше инженер, чем аналитик
+    - хочу production и инфраструктуру
+    - выбираю исследование данных
+
+- intent: change_answer
+  examples: |
+    - измени зарплату на [250к](salary_amount)
+    - поменяй опыт на [4](experience_years) года
+    - я не Data Scientist, а [Data Engineer](target_role)
+    - исправь роль на [MLOps](target_role)
+    - добавь навык [Kubernetes](skill)
+    - поменяй английский на [b2](english_level)
+    - я готов выйти сразу
+    - формат работы лучше [hybrid](work_format)
+    - измени ответ про проекты на production ML
+    - я ошибся, опыт [6](experience_years) лет
+
+- intent: repeat_question
+  examples: |
+    - повтори вопрос
+    - что ты спрашивал?
+    - можно еще раз?
+    - повторите пожалуйста
+    - я не понял вопрос
+    - какой текущий вопрос?
+
+- intent: skip_question
+  examples: |
+    - пропустить
+    - давай пропустим
+    - не хочу отвечать
+    - пока не знаю
+    - затрудняюсь ответить
+    - нет ответа
+    - не уверен
+
+- intent: ask_roles
+  examples: |
+    - какие роли есть?
+    - на какие позиции ты подбираешь?
+    - какие вакансии доступны?
+    - какие пять ролей?
+    - кого вы ищете?
+
+- intent: ask_role_details
+  examples: |
+    - расскажи про [Data Engineer](target_role)
+    - чем занимается [MLOps](target_role)?
+    - что делает [Data Analyst](target_role)?
+    - чем отличается [Data Scientist](target_role)?
+    - какие требования к [Project Manager](target_role)?
+
+- intent: ask_process
+  examples: |
+    - как проходит интервью?
+    - что будет дальше?
+    - как ты оцениваешь?
+    - по каким критериям идет отбор?
+    - что ты будешь спрашивать?
+
+- intent: ask_next_step
+  examples: |
+    - какой следующий шаг?
+    - что дальше?
+    - покажи отчет
+    - покажи summary
+    - дай отчет рекрутеру
+    - где экспорт?
+    - покажи результат
+
+- intent: ask_clarification
+  examples: |
+    - как отвечать?
+    - можно свободным текстом?
+    - что именно нужно написать?
+    - уточни пожалуйста
+    - я не понимаю формат ответа
+
+- intent: out_of_scope
+  examples: |
+    - какая сегодня погода?
+    - закажи пиццу
+    - расскажи анекдот
+    - сколько стоит биткоин?
+    - напиши курсовую
+    - включи музыку
+    - кто президент США?
+    - помоги с математикой
+
+- synonym: project_manager
+  examples: |
+    - Project Manager
+    - PM
+    - project
+    - проджект
+    - проектный менеджер
+    - менеджер проекта
+
+- synonym: data_analyst
+  examples: |
+    - Data Analyst
+    - аналитик данных
+    - DA
+    - BI аналитик
+    - продуктовый аналитик
+
+- synonym: data_engineer
+  examples: |
+    - Data Engineer
+    - инженер данных
+    - DE
+    - дата инженер
+
+- synonym: data_scientist
+  examples: |
+    - Data Scientist
+    - DS
+    - дата сайентист
+    - ML engineer
+    - ML специалист
+
+- synonym: mlops_engineer
+  examples: |
+    - MLOps
+    - MLOps Engineer
+    - mlops engineer
+    - инженер MLOps
+
+- synonym: remote
+  examples: |
+    - удаленка
+    - удаленно
+    - remote
+    - дистанционно
+
+- synonym: hybrid
+  examples: |
+    - гибрид
+    - hybrid
+    - частично офис
+
+- synonym: office
+  examples: |
+    - офис
+    - office
+    - в офис
+
+- synonym: any
+  examples: |
+    - любой
+    - любой формат
+    - без разницы
+
+- regex: experience_years
+  examples: |
+    - \d+([\.,]\d+)?
+
+- regex: salary_amount
+  examples: |
+    - \d+([\.,]\d+)?\s?(к|k|тыс|тысяч|руб|рублей)?
+
+- lookup: skill
+  examples: |
+    - Python
+    - SQL
+    - pandas
+    - numpy
+    - sklearn
+    - PyTorch
+    - TensorFlow
+    - ML
+    - Airflow
+    - Spark
+    - Kafka
+    - Docker
+    - Kubernetes
+    - CI/CD
+    - MLflow
+    - DVC
+    - Tableau
+    - Power BI
+    - Excel
+    - A/B тесты
+    - статистика
+    - Jira
+    - Scrum
+    - stakeholders
+    - ETL

@@ -1,30 +1,60 @@
 version: "3.1"
 
 stories:
-
-- story: happy path
+- story: greet and start
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
+    - intent: greet
+    - action: utter_greet
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
 
-- story: sad path 1
+- story: ask process then start
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
+    - intent: ask_process
+    - action: utter_process
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
 
-- story: sad path 2
+- story: interview with out of scope interruption
   steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: interview with clarification interruption
+  steps:
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: ask_clarification
+    - action: utter_clarification
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: interview with change answer
+  steps:
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: change_answer
+    - action: action_change_answer
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: tie breaker after ranking
+  steps:
+    - intent: provide_tie_breaker
+    - action: action_apply_tie_breaker
+    - intent: ask_next_step
+    - action: action_show_next_step
