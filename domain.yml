@@ -53,28 +53,24 @@ slots:
       - mlops_engineer
       - unknown
     mappings:
-      - type: from_entity
-        entity: target_role
+      - type: custom
   experience_years:
     type: float
     min_value: 0
     max_value: 50
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: experience_years
+      - type: custom
   skills:
     type: list
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: skill
+      - type: custom
   project_types:
     type: list
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: project_type
+      - type: custom
   project_complexity:
     type: categorical
     values:
@@ -84,8 +80,7 @@ slots:
       - unknown
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: project_complexity
+      - type: custom
   project_role:
     type: categorical
     values:
@@ -96,8 +91,7 @@ slots:
       - unknown
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: project_role
+      - type: custom
   salary_expectation_min:
     type: float
     min_value: 0
@@ -121,8 +115,7 @@ slots:
       - unknown
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: availability
+      - type: custom
   education_text:
     type: text
     influence_conversation: false
@@ -154,8 +147,7 @@ slots:
       - unknown
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: english_level
+      - type: custom
   work_format:
     type: categorical
     values:
@@ -166,8 +158,7 @@ slots:
       - unknown
     influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: work_format
+      - type: custom
   candidate_summary:
     type: any
     influence_conversation: false
@@ -256,24 +247,44 @@ responses:
     - text: "Остановил интервью. Можно начать заново командой: начать интервью."
   utter_ask_target_role:
     - text: "На какую позицию вы хотите пройти собеседование?"
+    - text: "Какая вакансия вам интересна?"
+    - text: "На какое направление хотите откликнуться?"
   utter_ask_experience_years:
     - text: "Сколько лет релевантного опыта у вас есть?"
+    - text: "Какой у вас опыт в годах по этому направлению?"
+    - text: "Сколько времени вы уже работаете с похожими задачами?"
   utter_ask_skills:
     - text: "Перечислите ключевые навыки и инструменты."
+    - text: "Какие навыки вы считаете своими сильными сторонами? Можно назвать инструменты, управленческие навыки или профессиональные компетенции."
+    - text: "Расскажите, с чем вы хорошо справляетесь в работе: инструменты, процессы, коммуникации, аналитика, разработка или управление."
   utter_ask_project_types:
     - text: "Расскажите о 1-2 самых релевантных проектах: тип проекта, данные, инструменты, результат."
+    - text: "Опишите один-два проекта, которыми вы сильнее всего гордитесь."
+    - text: "С какими проектами вы работали и какой был ваш вклад?"
   utter_ask_project_role:
     - text: "Какую роль вы выполняли в проектах: менеджер, аналитик, разработчик или лид?"
+    - text: "Какая была ваша зона ответственности в этих проектах?"
+    - text: "Вы больше управляли, анализировали, разрабатывали или лидировали команду?"
   utter_ask_education_text:
     - text: "Какое у вас образование или профильная подготовка?"
+    - text: "Расскажите про образование, курсы или профильную подготовку."
+    - text: "Есть ли у вас релевантное образование, курсы или сертификаты?"
   utter_ask_english_level:
     - text: "Какой у вас уровень английского?"
+    - text: "Как оцениваете свой английский?"
+    - text: "Комфортно ли читать документацию и общаться на английском?"
   utter_ask_work_format:
     - text: "Какой формат работы вам подходит: офис, удаленно, гибрид или любой?"
+    - text: "Какой формат работы рассматриваете?"
+    - text: "Вам удобнее офис, удаленка, гибрид или любой вариант?"
   utter_ask_salary_expectation_min:
     - text: "Какие зарплатные ожидания? Можно указать диапазон."
+    - text: "Какой уровень компенсации вы рассматриваете?"
+    - text: "Какая зарплатная вилка для вас комфортна?"
   utter_ask_availability:
     - text: "Когда готовы выйти на работу?"
+    - text: "Когда сможете приступить?"
+    - text: "В какие сроки вы готовы начать работу?"
   utter_roles:
     - text: "Можно откликнуться на пять направлений: Project Manager, Data Analyst, Data Engineer, Data Scientist и MLOps Engineer. Если хотите, начнем с позиции, которая вам ближе."
   utter_process:

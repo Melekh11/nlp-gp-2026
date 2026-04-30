@@ -24,11 +24,11 @@ ROLE_LABELS = {
 }
 
 ROLE_DETAILS = {
-    "project_manager": "Project Manager отвечает за сроки, риски, коммуникацию с бизнесом и координацию ML-команды.",
-    "data_analyst": "Data Analyst исследует данные, строит метрики, дашборды, проверяет гипотезы и формулирует требования.",
-    "data_engineer": "Data Engineer строит пайплайны, витрины, хранилища, потоковую и batch-обработку данных.",
-    "data_scientist": "Data Scientist строит, валидирует и улучшает ML-модели, проводит эксперименты и анализ качества.",
-    "mlops_engineer": "MLOps Engineer отвечает за деплой, мониторинг, CI/CD, инфраструктуру и production-жизненный цикл моделей.",
+    "project_manager": "Для Project Manager важны управление командой, коммуникация с бизнесом, планирование, работа со сроками и рисками, фасилитация, Jira/Scrum/Agile.",
+    "data_analyst": "Для Data Analyst важны SQL, продуктовые метрики, статистика, A/B-тесты, дашборды, Excel, Power BI или Tableau.",
+    "data_engineer": "Для Data Engineer важны SQL, Python, ETL, Airflow, Spark, Kafka, хранилища, витрины данных и контроль качества данных.",
+    "data_scientist": "Для Data Scientist важны Python, статистика, ML, sklearn, PyTorch или TensorFlow, эксперименты и оценка качества моделей.",
+    "mlops_engineer": "Для MLOps Engineer важны Docker, Kubernetes, CI/CD, MLflow, мониторинг, деплой моделей и production-инфраструктура.",
 }
 
 ROLE_ALIASES = {
@@ -36,6 +36,12 @@ ROLE_ALIASES = {
     "project manager": "project_manager",
     "project_manager": "project_manager",
     "проджект": "project_manager",
+    "проджект менеджер": "project_manager",
+    "проджект менеджера": "project_manager",
+    "продж": "project_manager",
+    "проджа": "project_manager",
+    "пм": "project_manager",
+    "пму": "project_manager",
     "проектный менеджер": "project_manager",
     "менеджер проекта": "project_manager",
     "data analyst": "data_analyst",
@@ -60,6 +66,8 @@ ROLE_ALIASES = {
 
 SKILL_ALIASES = {
     "python": "python",
+    "питон": "python",
+    "пайтон": "python",
     "sql": "sql",
     "pandas": "pandas",
     "numpy": "numpy",
@@ -79,7 +87,11 @@ SKILL_ALIASES = {
     "хранилище": "dwh",
     "витрин": "dwh",
     "docker": "docker",
+    "докер": "docker",
+    "докера": "docker",
     "kubernetes": "kubernetes",
+    "кубер": "kubernetes",
+    "кубером": "kubernetes",
     "k8s": "kubernetes",
     "ci/cd": "ci_cd",
     "cicd": "ci_cd",
@@ -101,17 +113,59 @@ SKILL_ALIASES = {
     "stakeholder": "stakeholders",
     "стейкхол": "stakeholders",
     "бизнес": "stakeholders",
+    "управлять людьми": "people_management",
+    "управление людьми": "people_management",
+    "управлял людьми": "people_management",
+    "управляла людьми": "people_management",
+    "управление команд": "people_management",
+    "вести команд": "people_management",
+    "руковод": "people_management",
+    "тимлид": "people_management",
+    "лид": "people_management",
+    "soft skills": "communication",
+    "софт": "communication",
+    "коммуникац": "communication",
+    "общаться": "communication",
+    "переговор": "communication",
+    "презентац": "presentation",
+    "публичн": "presentation",
+    "срок": "planning",
+    "планирован": "planning",
+    "roadmap": "planning",
+    "роадмап": "planning",
+    "риски": "risk_management",
+    "risk": "risk_management",
+    "требован": "requirements",
+    "бриф": "requirements",
+    "кейсы": "case_solving",
+    "кейс": "case_solving",
+    "case": "case_solving",
+    "чемпионат": "case_solving",
+    "кодить": "coding_basic",
+    "код": "coding_basic",
+    "программир": "coding_basic",
+    "ответствен": "ownership",
+    "организ": "ownership",
 }
 
 ROLE_SKILL_WEIGHTS = {
     "project_manager": {
         "stakeholders": 18,
+        "people_management": 18,
+        "communication": 14,
+        "planning": 14,
+        "risk_management": 12,
+        "requirements": 10,
+        "presentation": 8,
+        "case_solving": 6,
+        "ownership": 8,
         "scrum": 14,
         "agile": 12,
         "jira": 10,
         "statistics": 3,
         "sql": 3,
         "python": 2,
+        "coding_basic": 2,
     },
     "data_analyst": {
         "sql": 18,
@@ -123,6 +177,9 @@ ROLE_SKILL_WEIGHTS = {
         "python": 8,
         "pandas": 8,
         "stakeholders": 6,
+        "communication": 4,
+        "case_solving": 8,
+        "presentation": 4,
     },
     "data_engineer": {
         "sql": 10,
@@ -133,6 +190,7 @@ ROLE_SKILL_WEIGHTS = {
         "etl": 18,
         "dwh": 14,
         "docker": 5,
+        "coding_basic": 4,
     },
     "data_scientist": {
         "python": 15,
@@ -145,6 +203,8 @@ ROLE_SKILL_WEIGHTS = {
         "pytorch": 12,
         "tensorflow": 10,
         "ab_testing": 4,
+        "case_solving": 4,
+        "coding_basic": 4,
     },
     "mlops_engineer": {
         "python": 8,
@@ -238,7 +298,7 @@ def parse_years(text: str, values: List[Any]) -> Optional[float]:
         number = parse_number(value)
         if number is not None and number <= 50:
             return number
-    if "без опыта" in text:
+    if any(phrase in text for phrase in ["без опыта", "нет опыта", "опыта нет", "не было опыта", "давай пропустим", "пропустим"]):
         return 0.0
     if "меньше года" in text:
         return 0.5
@@ -273,21 +333,25 @@ def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optiona
     return min(numbers), max(numbers)
 
 
-def infer_skills(text: str, explicit: List[Any]) -> List[str]:
+def infer_skills(text: str, explicit: List[Any], allow_free_text: bool = False) -> List[str]:
     values = [str(value).lower() for value in explicit]
     for alias, skill in SKILL_ALIASES.items():
         if alias in text:
             values.append(skill)
+    if allow_free_text and not values and len(text.split()) >= 3 and not text.endswith("?"):
+        values.append("free_text_skills")
     return unique(values)
 
 
 def infer_projects(text: str, explicit: List[Any]) -> List[str]:
     values = [str(value).lower() for value in explicit]
+    if any(phrase in text for phrase in ["проектов нет", "нет проектов", "без проектов", "не было проектов"]) or ("бариста" in text and "проект" not in text):
+        return ["no_relevant_projects"]
     checks = {
         "etl": ["etl", "пайплайн", "pipeline", "airflow", "spark", "kafka"],
         "analytics": ["дашборд", "метрик", "bi", "ab", "a/b", "аналит"],
         "ml_model": ["модель", "ml", "классификац", "регресс", "прогноз", "рекоменд"],
-        "production_ml": ["production", "прод", "деплой", "инференс", "monitoring", "мониторинг"],
+        "production_ml": ["production", "продакшн", "деплой", "инференс", "monitoring", "мониторинг"],
         "management": ["управлял", "команд", "срок", "рис", "стейкхол", "stakeholder"],
         "pet_project": ["pet", "учебн", "курсов", "домашн"],
     }
@@ -295,6 +359,40 @@ def infer_projects(text: str, explicit: List[Any]) -> List[str]:
         if any(keyword in text for keyword in keywords):
             values.append(project)
     return unique(values)
+
+
+def has_project_context(text: str) -> bool:
+    return any(
+        word in text
+        for word in [
+            "проект",
+            "делал",
+            "делала",
+            "пилил",
+            "строил",
+            "собирал",
+            "обучал",
+            "выкатывал",
+            "вел ",
+            "вела ",
+            "занимался",
+            "занималась",
+            "production",
+            "продакшн",
+        ]
+    )
+
+
+def is_skip_like(text: str) -> bool:
+    return any(phrase in text for phrase in ["не знаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь"])
+
+
+def is_out_of_scope_text(text: str) -> bool:
+    return any(word in text for word in ["погода", "курс доллара", "новости", "анекдот", "сколько времени", "который час"])
+
+
+def is_role_skill_question(text: str) -> bool:
+    return text.endswith("?") and any(word in text for word in ["навык", "скилл", "уметь", "требован"]) and infer_role(text) != "unknown"
 
 
 def infer_project_role(text: str, value: Any = None) -> str:
@@ -309,11 +407,13 @@ def infer_project_role(text: str, value: Any = None) -> str:
         return "lead"
     if any(word in text for word in ["разраб", "инженер", "код", "строил", "делал"]):
         return "developer"
+    if any(phrase in text for phrase in ["никакая роль", "роли не было", "не было роли", "нет роли"]):
+        return "unknown"
     return "unknown"
 
 
 def infer_complexity(text: str) -> str:
-    high = ["production", "highload", "kubernetes", "spark", "kafka", "команда", "миллион", "мониторинг", "прод"]
+    high = ["production", "highload", "kubernetes", "spark", "kafka", "команда", "миллион", "мониторинг", "продакшн"]
     low = ["учебн", "pet", "простой", "курсов", "домашн"]
     if any(word in text for word in high):
         return "high"
@@ -333,7 +433,9 @@ def normalize_english(text: str, value: Any = None) -> str:
         return "none"
     if any(word in raw for word in ["свобод", "advanced", "fluent"]):
         return "c1"
-    if any(word in raw for word in ["документац", "intermediate"]):
+    if any(word in raw for word in ["upper intermediate", "выше среднего"]):
+        return "b2"
+    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально"]):
         return "b1"
     return "unknown"
 
@@ -353,7 +455,7 @@ def normalize_work_format(text: str, value: Any = None) -> str:
 
 def normalize_availability(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
-    if any(word in raw for word in ["сразу", "сейчас", "now", "немедленно"]):
+    if any(word in raw for word in ["сразу", "сейчас", "now", "немедленно", "хоть завтра", "завтра"]):
         return "available_now"
     if any(word in raw for word in ["три месяца", "3 месяца", "не раньше", "не готов", "позже"]):
         return "available_not_soon"
@@ -384,37 +486,42 @@ def infer_education(text: str) -> Tuple[List[str], List[str]]:
 
 def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     text = lower_text(tracker)
+    requested_slot = tracker.get_slot("requested_slot")
     facts: Dict[str, Any] = {}
     role = normalize_role((entities(tracker, "target_role") or [None])[0])
     if role == "unknown":
         role = infer_role(text)
     if role != "unknown":
         facts["target_role"] = role
-    years = parse_years(text, entities(tracker, "experience_years"))
+    years = parse_years(text, entities(tracker, "experience_years")) if requested_slot == "experience_years" or entities(tracker, "experience_years") else None
     if years is not None:
         facts["experience_years"] = years
-    skills = infer_skills(text, entities(tracker, "skill"))
+    skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=requested_slot == "skills")
     if skills:
         current = tracker.get_slot("skills") or []
         facts["skills"] = unique(current + skills)
-    projects = infer_projects(text, entities(tracker, "project_type"))
+    projects = infer_projects(text, entities(tracker, "project_type")) if requested_slot == "project_types" or has_project_context(text) else []
     if projects:
         current_projects = tracker.get_slot("project_types") or []
         facts["project_types"] = unique(current_projects + projects)
         facts["project_complexity"] = infer_complexity(text)
-    project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0])
+    project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0]) if requested_slot == "project_role" or any(word in text for word in ["лид", "менедж", "разработ", "аналит", "управлял", "управляла"]) else "unknown"
     if project_role != "unknown":
         facts["project_role"] = project_role
-    english = normalize_english(text, (entities(tracker, "english_level") or [None])[0])
+    english = normalize_english(text, (entities(tracker, "english_level") or [None])[0]) if requested_slot == "english_level" or entities(tracker, "english_level") else "unknown"
     if english != "unknown":
         facts["english_level"] = english
-    work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0])
+    work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0]) if requested_slot == "work_format" or entities(tracker, "work_format") else "unknown"
     if work_format != "unknown":
         facts["work_format"] = work_format
-    availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0])
+    availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0]) if requested_slot == "availability" or entities(tracker, "availability") else "unknown"
     if availability != "unknown":
         facts["availability"] = availability
-    salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount"))
+    if requested_slot == "salary_expectation_min" and "миллион" in text:
+        facts["salary_expectation_min"] = 1000000.0
+        facts["salary_expectation_max"] = None
+        return facts
+    salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount")) if requested_slot == "salary_expectation_min" or entities(tracker, "salary_amount") else (None, None)
     if salary_min is not None:
         facts["salary_expectation_min"] = salary_min
         facts["salary_expectation_max"] = salary_max
@@ -670,18 +777,49 @@ class ValidateInterviewForm(FormValidationAction):
         return facts
 
     async def extract_experience_years(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "experience_years" and not entities(tracker, "experience_years"):
+            return {}
+        text = lower_text(tracker)
+        if is_out_of_scope_text(text):
+            dispatcher.utter_message(text="Давайте вернемся к интервью. Сейчас важно понять ваш релевантный опыт.")
+            return {"experience_years": None}
+        if is_skip_like(text) or any(word in text for word in ["бариста", "студент", "учусь"]):
+            return {"experience_years": 0.0}
         return extract_facts(tracker)
 
     async def extract_skills(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "skills" and not entities(tracker, "skill"):
+            return {}
+        text = lower_text(tracker)
+        if is_role_skill_question(text):
+            role = infer_role(text)
+            dispatcher.utter_message(text=ROLE_DETAILS[role])
+            return {"skills": None}
+        if is_skip_like(text):
+            return {"skills": ["not_specified"]}
         return extract_facts(tracker)
 
     async def extract_project_types(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
-        return extract_facts(tracker)
+        if tracker.get_slot("requested_slot") != "project_types" and not entities(tracker, "project_type"):
+            return {}
+        if is_skip_like(lower_text(tracker)):
+            return {"project_types": ["not_specified"], "project_complexity": "unknown", "project_role": "unknown"}
+        facts = extract_facts(tracker)
+        if "no_relevant_projects" in facts.get("project_types", []):
+            facts["project_role"] = "unknown"
+        return facts
 
     async def extract_project_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "project_role" and not entities(tracker, "project_role"):
+            return {}
+        text = lower_text(tracker)
+        if is_skip_like(text) or any(phrase in text for phrase in ["никакая роль", "роли не было", "нет роли"]):
+            return {"project_role": "unknown"}
         return extract_facts(tracker)
 
     async def extract_education_text(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "education_text":
+            return extract_facts(tracker)
         text = text_of(tracker)
         levels, fields = infer_education(text.lower().replace("ё", "е"))
         facts = extract_facts(tracker)
@@ -689,15 +827,29 @@ class ValidateInterviewForm(FormValidationAction):
         return facts
 
     async def extract_english_level(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "english_level" and not entities(tracker, "english_level"):
+            return {}
+        if is_skip_like(lower_text(tracker)):
+            return {"english_level": "unknown"}
         return extract_facts(tracker)
 
     async def extract_work_format(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "work_format" and not entities(tracker, "work_format"):
+            return {}
+        if is_skip_like(lower_text(tracker)):
+            return {"work_format": "unknown"}
         return extract_facts(tracker)
 
     async def extract_salary_expectation_min(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "salary_expectation_min" and not entities(tracker, "salary_amount"):
+            return {}
         return extract_facts(tracker)
 
     async def extract_availability(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "availability" and not entities(tracker, "availability"):
+            return {}
+        if is_skip_like(lower_text(tracker)):
+            return {"availability": "unknown"}
         return extract_facts(tracker)
 
     def validate_target_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
@@ -705,23 +857,31 @@ class ValidateInterviewForm(FormValidationAction):
 
     def validate_experience_years(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
-            dispatcher.utter_message(text="Укажите опыт числом лет, например: 3 года.")
+            if not is_out_of_scope_text(lower_text(tracker)):
+                dispatcher.utter_message(text="Укажите опыт числом лет, например: 3 года. Если релевантного опыта нет, можно так и написать.")
             return {"experience_years": None}
         return {"experience_years": max(0.0, min(float(slot_value), 50.0))}
 
     def validate_skills(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if not slot_value:
-            dispatcher.utter_message(text="Перечислите хотя бы несколько навыков или инструментов.")
+            if not is_role_skill_question(lower_text(tracker)):
+                dispatcher.utter_message(text="Перечислите хотя бы несколько навыков или инструментов.")
             return {"skills": None}
         return {"skills": slot_value}
 
     def validate_project_types(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if not slot_value:
-            return {"project_types": ["unknown"], "project_complexity": "unknown"}
+            dispatcher.utter_message(text="Расскажите хотя бы об одном проекте или напишите, что проектов пока не было.")
+            return {"project_types": None, "project_complexity": None}
         return {"project_types": slot_value}
 
     def validate_project_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
-        return {"project_role": slot_value or "unknown"}
+        if not slot_value or slot_value == "unknown":
+            if "no_relevant_projects" in (tracker.get_slot("project_types") or []):
+                return {"project_role": "unknown"}
+            dispatcher.utter_message(text="Уточните вашу роль в проектах: управляли, анализировали, разрабатывали или лидировали?")
+            return {"project_role": None}
+        return {"project_role": slot_value}
 
     def validate_education_text(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         return {"education_text": slot_value or "unknown"}
@@ -786,7 +946,7 @@ class ActionChangeAnswer(Action):
         events: List[SlotSet] = []
         role = infer_role(text)
         years = parse_years(text, entities(tracker, "experience_years"))
-        skills = infer_skills(text, entities(tracker, "skill"))
+        skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=False)
         salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount"))
         english = normalize_english(text, (entities(tracker, "english_level") or [None])[0])
         work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0])

@@ -7,3 +7,7 @@ __pycache__/
 .rasa
 results
 credentials.yml
+exports/
+*.log
+dialog_smoke_output.jsonl
+.rasa_tmp/

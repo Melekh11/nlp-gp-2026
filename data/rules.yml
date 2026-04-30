@@ -215,6 +215,15 @@ rules:
     - intent: ask_role_details
     - action: action_show_role_details
 
+- rule: Ask role details during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: ask_role_details
+    - action: action_show_role_details
+    - action: interview_form
+    - active_loop: interview_form
+
 - rule: Ask next step
   steps:
     - intent: ask_next_step
