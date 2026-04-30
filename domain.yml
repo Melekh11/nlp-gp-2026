@@ -275,9 +275,9 @@ responses:
   utter_ask_availability:
     - text: "Когда готовы выйти на работу?"
   utter_roles:
-    - text: "Сейчас открыты направления: Project Manager, Data Analyst, Data Engineer, Data Scientist и MLOps Engineer."
+    - text: "Можно откликнуться на пять направлений: Project Manager, Data Analyst, Data Engineer, Data Scientist и MLOps Engineer. Если хотите, начнем с позиции, которая вам ближе."
   utter_process:
-    - text: "Можно откликнуться прямо здесь. Я задам несколько вопросов по опыту и ожиданиям, после чего передам информацию рекрутеру."
+    - text: "Можно откликнуться на Project Manager, Data Analyst, Data Engineer, Data Scientist или MLOps Engineer. Я задам несколько вопросов по опыту и ожиданиям, после чего передам информацию рекрутеру."
   utter_clarification:
     - text: "Отвечайте свободным текстом. Если нужно исправить ответ, напишите, что именно поменять."
   utter_out_of_scope:

@@ -61,6 +61,94 @@ rules:
     - action: interview_form
     - active_loop: interview_form
 
+- rule: Handle experience answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_exp
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle skills answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_skills
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle projects answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_projects
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle salary answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_salary
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle availability answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_availability
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle education answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_education
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle english answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_english
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle work format answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_work_format
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle combined answer during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: provide_multiple_fields
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle affirm during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: affirm
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Handle deny during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: deny
+    - action: interview_form
+    - active_loop: interview_form
+
 - rule: Change answer
   steps:
     - intent: change_answer
@@ -85,10 +173,28 @@ rules:
     - intent: ask_roles
     - action: utter_roles
 
+- rule: Ask roles during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: ask_roles
+    - action: utter_roles
+    - action: interview_form
+    - active_loop: interview_form
+
 - rule: Ask process
   steps:
     - intent: ask_process
     - action: utter_process
+
+- rule: Ask process during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: ask_process
+    - action: utter_process
+    - action: interview_form
+    - active_loop: interview_form
 
 - rule: Ask clarification
   steps:
