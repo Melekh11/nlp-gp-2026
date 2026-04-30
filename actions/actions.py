@@ -168,7 +168,7 @@ SALARY_LIMITS = {
 }
 
 QUESTION_BY_SLOT = {
-    "target_role": "На какую роль вы ориентируетесь? Можно ответить: не знаю, хочу чтобы бот подобрал.",
+    "target_role": "На какую позицию вы хотите пройти собеседование?",
     "experience_years": "Сколько лет релевантного опыта у вас есть?",
     "skills": "Перечислите ключевые навыки и инструменты.",
     "project_types": "Расскажите о 1-2 самых релевантных проектах: тип проекта, данные, инструменты, результат.",
@@ -634,19 +634,17 @@ def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
 def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str, Any], result: Dict[str, Any]) -> List[SlotSet]:
     report = build_recruiter_report(slots, result)
     json_path, csv_path = export_report(tracker.sender_id, report)
-    ranking_text = "\n".join([f"{i + 1}. {item['label']} — {item['score']}/100" for i, item in enumerate(result["ranking"])])
-    reasons = "; ".join(result["ranking"][0]["reasons"])
-    risks = "; ".join(result["risk_flags"])
+    top_roles = ", ".join(item["label"] for item in result["ranking"][:2])
+    if result["decision_status"] == "fit":
+        decision_text = f"Спасибо, интервью завершено. По вашему опыту наиболее релевантное направление: {ROLE_LABELS[result['recommended_role']]}. Также можно рассмотреть: {top_roles}."
+    elif result["decision_status"] == "borderline":
+        decision_text = f"Спасибо, интервью завершено. Я передам ваши ответы рекрутеру для дополнительного рассмотрения. Ближайшие по профилю направления: {top_roles}."
+    else:
+        decision_text = "Спасибо, интервью завершено. Сейчас я не вижу достаточного совпадения с открытыми позициями, но ваши ответы будут сохранены для рекрутера."
     dispatcher.utter_message(
         text=(
-            f"Рейтинг ролей:\n{ranking_text}\n\n"
-            f"Решение: {result['decision_status']}.\n"
-            f"Рекомендация: {ROLE_LABELS[result['recommended_role']]}.\n"
-            f"Почему: {reasons}.\n"
-            f"Риски: {risks}.\n"
-            f"Следующий шаг: {report['next_step']}.\n"
-            f"Экспорт JSON: {json_path}\n"
-            f"Экспорт CSV: {csv_path}"
+            f"{decision_text}\n"
+            "Следующий шаг: с вами свяжутся, если профиль подойдет под текущие вакансии."
         )
     )
     return [
@@ -752,8 +750,7 @@ class ActionRankCandidate(Action):
         slots = tracker.current_slot_values()
         result = score_candidate(slots)
         if result["tie_breaker_question"]:
-            ranking_text = "\n".join([f"{i + 1}. {item['label']} — {item['score']}/100" for i, item in enumerate(result["ranking"][:3])])
-            dispatcher.utter_message(text=f"Есть близкий результат между ролями:\n{ranking_text}\n\n{result['tie_breaker_question']}")
+            dispatcher.utter_message(text=f"Хочу уточнить, чтобы точнее сопоставить ваш опыт с вакансией. {result['tie_breaker_question']}")
             return [
                 SlotSet("role_ranking", result["ranking"]),
                 SlotSet("risk_flags", result["risk_flags"]),
@@ -770,7 +767,7 @@ class ActionApplyTieBreaker(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if not tracker.get_slot("tie_breaker_question"):
-            dispatcher.utter_message(text="Сейчас нет активного уточняющего вопроса. Могу показать текущий результат.")
+            dispatcher.utter_message(text="Сейчас нет активного уточняющего вопроса. Можем продолжить интервью.")
             return []
         slots = tracker.current_slot_values()
         answer = text_of(tracker)
@@ -827,7 +824,7 @@ class ActionChangeAnswer(Action):
         if changed:
             dispatcher.utter_message(text="Обновил: " + ", ".join(changed) + ".")
         else:
-            dispatcher.utter_message(text="Не понял, какое поле нужно изменить. Например: измени зарплату на 250к.")
+            dispatcher.utter_message(text="Не понял, что именно нужно изменить. Например: изменить зарплатные ожидания на 250к.")
         return events
 
 
@@ -841,7 +838,7 @@ class ActionRepeatQuestion(Action):
         if question:
             dispatcher.utter_message(text=question)
         else:
-            dispatcher.utter_message(text="Сейчас нет активного вопроса. Можно начать интервью или запросить отчет.")
+            dispatcher.utter_message(text="Сейчас нет активного вопроса. Можно начать интервью или продолжить отклик.")
         return []
 
 
@@ -874,18 +871,13 @@ class ActionShowNextStep(Action):
             dispatcher.utter_message(text="Сначала ответьте на уточняющий вопрос: " + tie_question)
             return []
         if not report:
-            dispatcher.utter_message(text="Отчет еще не сформирован. Сначала нужно пройти интервью.")
+            dispatcher.utter_message(text="Сначала нужно пройти короткое интервью.")
             return []
-        ranking_text = "\n".join([f"{i + 1}. {item['label']} — {item['score']}/100" for i, item in enumerate(report["role_ranking"])])
+        top_roles = ", ".join(item["label"] for item in report["role_ranking"][:2])
         dispatcher.utter_message(
             text=(
-                f"Рекрутерский отчет:\n{ranking_text}\n\n"
-                f"Решение: {report['decision_status']}.\n"
-                f"Рекомендованная роль: {ROLE_LABELS[report['recommended_role']]}.\n"
-                f"Риски: {'; '.join(report['risk_flags'])}.\n"
-                f"Следующий шаг: {report['next_step']}.\n"
-                f"JSON: {tracker.get_slot('export_path_json')}\n"
-                f"CSV: {tracker.get_slot('export_path_csv')}"
+                f"Ваш отклик принят. Наиболее близкие направления: {top_roles}.\n"
+                "Если профиль подойдет под текущие вакансии, рекрутер свяжется с вами для следующего этапа."
             )
         )
         return []
