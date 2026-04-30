@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Text, Tuple
 
@@ -302,6 +302,12 @@ def parse_years(text: str, values: List[Any]) -> Optional[float]:
         return 0.0
     if "меньше года" in text:
         return 0.5
+    range_match = re.search(r"\b(\d+([\.,]\d+)?)\s*[-–]\s*(\d+([\.,]\d+)?)\b", text)
+    if range_match:
+        left = float(range_match.group(1).replace(",", "."))
+        right = float(range_match.group(3).replace(",", "."))
+        if left <= 50 and right <= 50:
+            return round((left + right) / 2, 1)
     match = re.search(r"(\d+([\.,]\d+)?)\s*(год|лет|года)", text)
     if match:
         return float(match.group(1).replace(",", "."))
@@ -384,7 +390,7 @@ def has_project_context(text: str) -> bool:
 
 
 def is_skip_like(text: str) -> bool:
-    return any(phrase in text for phrase in ["не знаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь"])
+    return any(phrase in text for phrase in ["не знаю", "незнаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь"])
 
 
 def is_out_of_scope_text(text: str) -> bool:
@@ -429,13 +435,18 @@ def normalize_english(text: str, value: Any = None) -> str:
     for level in ["c2", "c1", "b2", "b1", "a2", "a1"]:
         if level in raw:
             return level
-    if any(word in raw for word in ["нет", "никак", "не знаю"]):
+    clean = re.sub(r"[^\wа-яА-Я]+", " ", raw).strip()
+    if clean in {"да", "ага", "угу", "вполне", "норм", "нормально"}:
+        return "b1"
+    if clean in {"нет", "неа", "никак"}:
+        return "none"
+    if any(word in raw for word in ["нет", "никак", "не знаю", "незнаю"]):
         return "none"
     if any(word in raw for word in ["свобод", "advanced", "fluent"]):
         return "c1"
     if any(word in raw for word in ["upper intermediate", "выше среднего"]):
         return "b2"
-    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально"]):
+    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально", "вполне"]):
         return "b1"
     return "unknown"
 
@@ -496,7 +507,8 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     years = parse_years(text, entities(tracker, "experience_years")) if requested_slot == "experience_years" or entities(tracker, "experience_years") else None
     if years is not None:
         facts["experience_years"] = years
-    skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=requested_slot == "skills")
+    latest_intent = (tracker.latest_message.get("intent") or {}).get("name")
+    skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=requested_slot == "skills") if requested_slot == "skills" or latest_intent in {"provide_skills", "provide_multiple_fields"} else []
     if skills:
         current = tracker.get_slot("skills") or []
         facts["skills"] = unique(current + skills)
@@ -692,7 +704,7 @@ def build_candidate_summary(slots: Dict[str, Any], result: Dict[str, Any]) -> Di
 
 def build_recruiter_report(slots: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return {
-        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "candidate_summary": build_candidate_summary(slots, result),
         "role_ranking": result["ranking"],
         "recommended_role": result["recommended_role"],
@@ -714,7 +726,7 @@ def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
     export_dir = Path.cwd() / "exports"
     export_dir.mkdir(exist_ok=True)
     safe_sender = re.sub(r"[^a-zA-Z0-9_-]+", "_", sender_id or "candidate")
-    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     json_path = export_dir / f"{safe_sender}_{stamp}.json"
     csv_path = export_dir / f"{safe_sender}_{stamp}.csv"
     json_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -738,22 +750,73 @@ def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
     return str(json_path), str(csv_path)
 
 
+def human_reasons(result: Dict[str, Any]) -> List[str]:
+    reasons = result["ranking"][0].get("reasons") or []
+    cleaned = []
+    replacements = {
+        "релевантные навыки": "релевантные навыки",
+        "кандидат целится в эту роль": "вы рассматриваете это направление",
+        "есть production/MLOps опыт": "есть опыт с production/MLOps-задачами",
+        "есть опыт ML-моделей": "есть опыт с ML-моделями",
+        "есть опыт data pipelines или DWH": "есть опыт с пайплайнами данных или хранилищами",
+        "есть аналитические проекты или роль аналитика": "есть аналитический опыт",
+        "есть управленческая роль в проектах": "есть управленческий опыт",
+        "проекты высокой сложности": "есть признаки сложных проектов",
+        "профиль частично пересекается с ролью": "часть опыта пересекается с ролью",
+    }
+    for reason in reasons:
+        item = reason
+        for source, target in replacements.items():
+            item = item.replace(source, target)
+        cleaned.append(item)
+    return cleaned[:3] or ["в ответах есть несколько релевантных сигналов для этой роли"]
+
+
+def human_risks(result: Dict[str, Any]) -> List[str]:
+    risks = []
+    for risk in result.get("risk_flags") or []:
+        if risk == "критичных рисков не обнаружено":
+            continue
+        risk = risk.replace("низкое соответствие всем пяти ролям", "пока мало признаков сильного совпадения с открытыми ролями")
+        risk = risk.replace("мало релевантного опыта", "релевантного опыта может быть недостаточно для части вакансий")
+        risk = risk.replace("зарплатные ожидания выше типичного диапазона роли", "зарплатные ожидания могут потребовать отдельного согласования")
+        risk = risk.replace("английский может ограничить работу с документацией и международной командой", "английский может потребовать уточнения на следующем этапе")
+        risk = risk.replace("кандидат доступен не скоро", "срок выхода может быть не для всех команд удобен")
+        risk = risk.replace("не хватает ключевых сигналов роли:", "стоит дополнительно раскрыть опыт с:")
+        risks.append(risk)
+    return risks[:3]
+
+
+def final_message(result: Dict[str, Any]) -> str:
+    recommended = ROLE_LABELS[result["recommended_role"]]
+    alternatives = [item["label"] for item in result["ranking"][1:3]]
+    reasons = "; ".join(human_reasons(result))
+    risks = human_risks(result)
+    if result["decision_status"] == "fit":
+        status = f"По вашим ответам лучше всего подходит направление {recommended}."
+        next_step_text = "Следующий шаг: передать профиль на техническое интервью."
+    elif result["decision_status"] == "borderline":
+        status = f"По вашим ответам профиль ближе всего к направлению {recommended}, но я бы дополнительно сверил детали с рекрутером."
+        next_step_text = "Следующий шаг: короткий созвон с рекрутером, чтобы уточнить опыт и ожидания."
+    else:
+        status = f"По текущим ответам сильного совпадения с открытыми ролями пока не видно. Ближайшее направление: {recommended}."
+        next_step_text = "Следующий шаг: рекрутер сможет вернуться к профилю, если появится более подходящая вакансия."
+    parts = [
+        "Спасибо, интервью завершено.",
+        status,
+        f"Также можно рассмотреть: {', '.join(alternatives)}.",
+        f"Почему: {reasons}.",
+    ]
+    if risks:
+        parts.append("Что может потребовать уточнения: " + "; ".join(risks) + ".")
+    parts.append(next_step_text)
+    return "\n".join(parts)
+
+
 def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str, Any], result: Dict[str, Any]) -> List[SlotSet]:
     report = build_recruiter_report(slots, result)
     json_path, csv_path = export_report(tracker.sender_id, report)
-    top_roles = ", ".join(item["label"] for item in result["ranking"][:2])
-    if result["decision_status"] == "fit":
-        decision_text = f"Спасибо, интервью завершено. По вашему опыту наиболее релевантное направление: {ROLE_LABELS[result['recommended_role']]}. Также можно рассмотреть: {top_roles}."
-    elif result["decision_status"] == "borderline":
-        decision_text = f"Спасибо, интервью завершено. Я передам ваши ответы рекрутеру для дополнительного рассмотрения. Ближайшие по профилю направления: {top_roles}."
-    else:
-        decision_text = "Спасибо, интервью завершено. Сейчас я не вижу достаточного совпадения с открытыми позициями, но ваши ответы будут сохранены для рекрутера."
-    dispatcher.utter_message(
-        text=(
-            f"{decision_text}\n"
-            "Следующий шаг: с вами свяжутся, если профиль подойдет под текущие вакансии."
-        )
-    )
+    dispatcher.utter_message(text=final_message(result))
     return [
         SlotSet("candidate_summary", report["candidate_summary"]),
         SlotSet("recruiter_report", report),
@@ -772,8 +835,12 @@ class ValidateInterviewForm(FormValidationAction):
         return "validate_interview_form"
 
     async def extract_target_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "target_role" and not entities(tracker, "target_role"):
+            role = infer_role(lower_text(tracker))
+            return {"target_role": role} if role != "unknown" else {}
         facts = extract_facts(tracker)
-        facts["target_role"] = facts.get("target_role") or "unknown"
+        if not facts.get("target_role"):
+            facts["target_role"] = tracker.get_slot("target_role") or "unknown"
         return facts
 
     async def extract_experience_years(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
@@ -788,7 +855,8 @@ class ValidateInterviewForm(FormValidationAction):
         return extract_facts(tracker)
 
     async def extract_skills(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
-        if tracker.get_slot("requested_slot") != "skills" and not entities(tracker, "skill"):
+        latest_intent = (tracker.latest_message.get("intent") or {}).get("name")
+        if tracker.get_slot("requested_slot") != "skills" and latest_intent not in {"provide_skills", "provide_multiple_fields"}:
             return {}
         text = lower_text(tracker)
         if is_role_skill_question(text):
@@ -829,8 +897,12 @@ class ValidateInterviewForm(FormValidationAction):
     async def extract_english_level(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "english_level" and not entities(tracker, "english_level"):
             return {}
-        if is_skip_like(lower_text(tracker)):
+        text = lower_text(tracker)
+        if is_skip_like(text):
             return {"english_level": "unknown"}
+        english = normalize_english(text, (entities(tracker, "english_level") or [None])[0])
+        if english != "unknown":
+            return {"english_level": english}
         return extract_facts(tracker)
 
     async def extract_work_format(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
