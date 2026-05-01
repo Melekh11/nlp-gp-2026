@@ -1,3 +1,4 @@
 rasa==3.6.21
 python-dotenv==1.1.0
+pyngrok>=7.2,<8
 rasa-sdk==3.6.*

@@ -1,0 +1,13 @@
+.env
+.rasa/
+models/
+exports/
+__pycache__/
+*.pyc
+*.log
+venv/
+.venv/
+results/
+dialog_smoke_output.jsonl
+.rasa_tmp/
+.git/

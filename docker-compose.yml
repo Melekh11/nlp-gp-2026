@@ -1,0 +1,50 @@
+services:
+  rasa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rasa-test-2-rasa:latest
+    container_name: rasa
+    command:
+      - run
+      - --enable-api
+      - --interface
+      - 0.0.0.0
+      - --port
+      - "5005"
+      - --cors
+      - "*"
+      - --endpoints
+      - endpoints.docker.yml
+    volumes:
+      - ./:/app
+      - ngrok-cache:/tmp/ngrok
+    ports:
+      - "5005:5005"
+    env_file:
+      - .env
+    environment:
+      DOTENV_PATH: /app/.env
+      PYNGROK_CONFIG_PATH: /tmp/ngrok/ngrok.yml
+      PYNGROK_NGROK_PATH: /tmp/ngrok/ngrok
+    depends_on:
+      - actions
+
+  actions:
+    build:
+      context: ./actions
+      dockerfile: Dockerfile
+    image: rasa-test-2-actions:latest
+    container_name: rasa-actions
+    command: start --actions actions --port 5055 --debug --auto-reload
+    volumes:
+      - ./actions:/app/actions
+      - ./exports:/app/exports
+    ports:
+      - "5055:5055"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+volumes:
+  ngrok-cache:
