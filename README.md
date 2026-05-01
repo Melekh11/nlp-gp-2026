@@ -24,7 +24,7 @@ cp .env.example .env
 
 ```env
 TELEGRAM_TOKEN=<токен Telegram Bot API от @BotFather>
-NGROK_AUTHTOKEN=<ваш ngrok authtoken>
+NGROK_AUTHTOKEN=<ваш ngrok authtoken> # получить здесь https://dashboard.ngrok.com/authtokens
 ```
 
 `TELEGRAM_WEBHOOK_URL` вручную больше обновлять не нужно — скрипт сам перезапишет его при каждом новом запуске ngrok.
