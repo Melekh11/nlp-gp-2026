@@ -4,3 +4,16 @@ models/
 __pycache__/
 *.pyc
 *.log
+venv
+.venv/
+.env
+models
+__pycache__/
+.ipynb_checkpoints/
+.rasa
+results
+credentials.yml
+exports/
+*.log
+dialog_smoke_output.jsonl
+.rasa_tmp/

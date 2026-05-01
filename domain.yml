@@ -5,30 +5,307 @@ intents:
   - goodbye
   - affirm
   - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
-  - start
+  - start_interview
+  - stop_interview
+  - provide_exp
+  - provide_skills
+  - provide_projects
+  - provide_salary
+  - provide_availability
+  - provide_multiple_fields
+  - provide_education
+  - provide_english
+  - provide_work_format
+  - provide_tie_breaker
+  - change_answer
+  - repeat_question
+  - skip_question
+  - ask_roles
+  - ask_role_details
+  - ask_process
+  - ask_next_step
+  - ask_clarification
+  - out_of_scope
+  - nlu_fallback
+
+entities:
+  - target_role
+  - work_format
+  - salary_amount
+  - availability
+  - experience_years
+  - skill
+  - project_type
+  - project_complexity
+  - project_role
+  - education
+  - english_level
+  - field_name
+
+slots:
+  target_role:
+    type: categorical
+    values:
+      - project_manager
+      - data_analyst
+      - data_engineer
+      - data_scientist
+      - mlops_engineer
+      - unknown
+    mappings:
+      - type: custom
+  experience_years:
+    type: float
+    min_value: 0
+    max_value: 50
+    influence_conversation: false
+    mappings:
+      - type: custom
+  skills:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  project_types:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  project_complexity:
+    type: categorical
+    values:
+      - low
+      - medium
+      - high
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  project_role:
+    type: categorical
+    values:
+      - manager
+      - analyst
+      - developer
+      - lead
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  salary_expectation_min:
+    type: float
+    min_value: 0
+    max_value: 2000000
+    influence_conversation: false
+    mappings:
+      - type: custom
+  salary_expectation_max:
+    type: float
+    min_value: 0
+    max_value: 2000000
+    influence_conversation: false
+    mappings:
+      - type: custom
+  availability:
+    type: categorical
+    values:
+      - available_now
+      - available_soon
+      - available_not_soon
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  education_text:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: interview_form
+            requested_slot: education_text
+  education_level:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  education_field:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  english_level:
+    type: categorical
+    values:
+      - none
+      - a1
+      - a2
+      - b1
+      - b2
+      - c1
+      - c2
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  work_format:
+    type: categorical
+    values:
+      - office
+      - remote
+      - hybrid
+      - any
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  candidate_summary:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+  recruiter_report:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+  role_ranking:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+  risk_flags:
+    type: list
+    influence_conversation: false
+    mappings:
+      - type: custom
+  decision_status:
+    type: categorical
+    values:
+      - fit
+      - borderline
+      - reject
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  recommended_role:
+    type: categorical
+    values:
+      - project_manager
+      - data_analyst
+      - data_engineer
+      - data_scientist
+      - mlops_engineer
+      - unknown
+    influence_conversation: false
+    mappings:
+      - type: custom
+  tie_breaker_question:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+  tie_breaker_answer:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  export_path_json:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  export_path_csv:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+forms:
+  interview_form:
+    required_slots:
+      - target_role
+      - experience_years
+      - skills
+      - project_types
+      - project_role
+      - education_text
+      - english_level
+      - work_format
+      - salary_expectation_min
+      - availability
 
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
-
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
-  utter_did_that_help:
-  - text: "Did that help you?"
-
-  utter_happy:
-  - text: "Great, carry on!"
-
+    - text: "Здравствуйте. Здесь можно пройти первичное интервью на роли в ML-команде."
   utter_goodbye:
-  - text: "Bye"
+    - text: "До свидания. Удачи."
+  utter_start_interview:
+    - text: "Хорошо, начнем. Сначала уточню опыт, затем проекты и зарплатные ожидания."
+    - text: "Давайте начнем. Пойдем по опыту, проектам и условиям, которые вам важны."
+  utter_stop_interview:
+    - text: "Интервью остановлено. Если захотите продолжить позже, просто напишите, что хотите откликнуться."
+  utter_ask_target_role:
+    - text: "На какую позицию вы хотите пройти собеседование?"
+    - text: "Какая вакансия вам интересна?"
+    - text: "На какое направление хотите откликнуться?"
+  utter_ask_experience_years:
+    - text: "Сколько лет вы работаете с похожими задачами?"
+    - text: "Какой у вас релевантный опыт по этому направлению?"
+    - text: "Сколько примерно лет такого опыта можно учитывать?"
+  utter_ask_skills:
+    - text: "Какие навыки и инструменты вы чаще всего используете?"
+    - text: "Что вы считаете своими сильными сторонами в работе?"
+    - text: "С чем вы уверенно справляетесь: инструменты, процессы, аналитика, разработка, управление?"
+  utter_ask_project_types:
+    - text: "Расскажите про один-два проекта, которые лучше всего показывают ваш опыт."
+    - text: "Какой проект из последних вы бы выделили и что именно вы в нем делали?"
+    - text: "С какими задачами или проектами вы работали ближе всего к выбранной роли?"
+  utter_ask_project_role:
+    - text: "Какая была ваша зона ответственности в этих проектах?"
+    - text: "Что именно было на вашей стороне: разработка, анализ, управление, лидерство?"
+    - text: "Какую роль вы занимали в команде?"
+  utter_ask_education_text:
+    - text: "Расскажите про образование или профильную подготовку."
+    - text: "Есть ли у вас профильное образование, курсы или сертификаты?"
+    - text: "Какая подготовка помогает вам в этой роли?"
+  utter_ask_english_level:
+    - text: "Как оцениваете свой английский?"
+    - text: "Насколько комфортно читать документацию и общаться на английском?"
+    - text: "Какой примерно уровень английского можно указать?"
+  utter_ask_work_format:
+    - text: "Какой формат работы вам подходит?"
+    - text: "Какой формат рассматриваете: офис, удаленно, гибрид?"
+    - text: "Какой режим работы был бы комфортным?"
+  utter_ask_salary_expectation_min:
+    - text: "Какую зарплату вы рассматриваете?"
+    - text: "Какая зарплатная вилка была бы для вас комфортной?"
+    - text: "Какие зарплатные ожидания?"
+  utter_ask_availability:
+    - text: "Когда сможете приступить?"
+    - text: "Когда вы готовы выйти на работу?"
+    - text: "Какие сроки выхода для вас реалистичны?"
+  utter_roles:
+    - text: "Сейчас открыты направления Project Manager, Data Analyst, Data Engineer, Data Scientist и MLOps Engineer. Можем начать с того, которое вам ближе."
+  utter_process:
+    - text: "Здесь можно пройти первичное интервью на Project Manager, Data Analyst, Data Engineer, Data Scientist или MLOps Engineer. Начать можно с любой из этих ролей."
+  utter_clarification:
+    - text: "Можно отвечать свободно, как на обычном интервью. Если захотите что-то исправить, просто напишите, что поменять."
+  utter_out_of_scope:
+    - text: "Давайте вернемся к собеседованию по вакансии."
+  utter_default:
+    - text: "Уточните, пожалуйста. Если хотите откликнуться на вакансию, напишите, на какую позицию вы претендуете."
 
-  utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
+actions:
+  - validate_interview_form
+  - action_rank_candidate
+  - action_apply_tie_breaker
+  - action_change_answer
+  - action_repeat_question
+  - action_skip_question
+  - action_show_next_step
+  - action_show_role_details
 
 session_config:
   session_expiration_time: 60

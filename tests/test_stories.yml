@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #### This file contains tests to evaluate that your bot behaves as expected.
 #### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
 
@@ -89,3 +90,94 @@ stories:
       are you a bot?
     intent: bot_challenge
   - action: utter_iamabot
+=======
+version: "3.1"
+
+stories:
+- story: data scientist candidate
+  steps:
+    - user: |
+        привет
+      intent: greet
+    - action: utter_greet
+    - user: |
+        хочу пройти интервью
+      intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - user: |
+        Data Scientist
+      intent: provide_multiple_fields
+    - slot_was_set:
+        - target_role: data_scientist
+    - user: |
+        4 года опыта
+      intent: provide_exp
+    - slot_was_set:
+        - experience_years: 4.0
+    - user: |
+        Python, SQL, ML, sklearn, PyTorch, статистика
+      intent: provide_skills
+    - user: |
+        обучал ML модель для прогноза оттока и делал эксперименты
+      intent: provide_projects
+    - user: |
+        разработчик
+      intent: provide_projects
+    - user: |
+        магистратура по машинному обучению
+      intent: provide_education
+    - user: |
+        b2
+      intent: provide_english
+    - user: |
+        remote
+      intent: provide_work_format
+    - user: |
+        от 300к
+      intent: provide_salary
+    - user: |
+        готов через две недели
+      intent: provide_availability
+    - action: interview_form
+    - active_loop: null
+    - action: action_rank_candidate
+
+- story: data engineer with change answer
+  steps:
+    - user: |
+        начать интервью
+      intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - user: |
+        измени роль на Data Engineer
+      intent: change_answer
+    - action: action_change_answer
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: out of scope during interview
+  steps:
+    - user: |
+        начать интервью
+      intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - user: |
+        какая погода?
+      intent: out_of_scope
+    - action: utter_out_of_scope
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: tie breaker answer
+  steps:
+    - user: |
+        мне ближе production и инфраструктура
+      intent: provide_tie_breaker
+    - action: action_apply_tie_breaker
+>>>>>>> main

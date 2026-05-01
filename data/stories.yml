@@ -1,6 +1,7 @@
 version: "3.1"
 
 stories:
+<<<<<<< HEAD
 
 - story: happy path
   steps:
@@ -28,3 +29,62 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+=======
+- story: greet and start
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: ask process then start
+  steps:
+    - intent: ask_process
+    - action: utter_process
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: interview with out of scope interruption
+  steps:
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: interview with clarification interruption
+  steps:
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: ask_clarification
+    - action: utter_clarification
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: interview with change answer
+  steps:
+    - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+    - intent: change_answer
+    - action: action_change_answer
+    - action: interview_form
+    - active_loop: interview_form
+
+- story: tie breaker after ranking
+  steps:
+    - intent: provide_tie_breaker
+    - action: action_apply_tie_breaker
+    - intent: ask_next_step
+    - action: action_show_next_step
+>>>>>>> main
