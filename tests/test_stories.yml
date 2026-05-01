@@ -1,183 +1,89 @@
-<<<<<<< HEAD
-#### This file contains tests to evaluate that your bot behaves as expected.
-#### If you want to learn more, please see the docs: https://rasa.com/docs/rasa/testing-your-assistant
-
-stories:
-- story: happy path 1
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-
-- story: happy path 2
-  steps:
-  - user: |
-      hello there!
-    intent: greet
-  - action: utter_greet
-  - user: |
-      amazing
-    intent: mood_great
-  - action: utter_happy
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: sad path 1
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      yes
-    intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - user: |
-      hello
-    intent: greet
-  - action: utter_greet
-  - user: |
-      not good
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      not really
-    intent: deny
-  - action: utter_goodbye
-
-- story: sad path 3
-  steps:
-  - user: |
-      hi
-    intent: greet
-  - action: utter_greet
-  - user: |
-      very terrible
-    intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - user: |
-      no
-    intent: deny
-  - action: utter_goodbye
-
-- story: say goodbye
-  steps:
-  - user: |
-      bye-bye!
-    intent: goodbye
-  - action: utter_goodbye
-
-- story: bot challenge
-  steps:
-  - user: |
-      are you a bot?
-    intent: bot_challenge
-  - action: utter_iamabot
-=======
 version: "3.1"
 
 stories:
-- story: data scientist candidate
-  steps:
-    - user: |
-        привет
-      intent: greet
-    - action: utter_greet
-    - user: |
-        хочу пройти интервью
-      intent: start_interview
-    - action: utter_start_interview
-    - action: interview_form
-    - active_loop: interview_form
-    - user: |
-        Data Scientist
-      intent: provide_multiple_fields
-    - slot_was_set:
-        - target_role: data_scientist
-    - user: |
-        4 года опыта
-      intent: provide_exp
-    - slot_was_set:
-        - experience_years: 4.0
-    - user: |
-        Python, SQL, ML, sklearn, PyTorch, статистика
-      intent: provide_skills
-    - user: |
-        обучал ML модель для прогноза оттока и делал эксперименты
-      intent: provide_projects
-    - user: |
-        разработчик
-      intent: provide_projects
-    - user: |
-        магистратура по машинному обучению
-      intent: provide_education
-    - user: |
-        b2
-      intent: provide_english
-    - user: |
-        remote
-      intent: provide_work_format
-    - user: |
-        от 300к
-      intent: provide_salary
-    - user: |
-        готов через две недели
-      intent: provide_availability
-    - action: interview_form
-    - active_loop: null
-    - action: action_rank_candidate
+  - story: data scientist candidate
+    steps:
+      - user: |
+          привет
+        intent: greet
+      - action: utter_greet
+      - user: |
+          хочу пройти интервью
+        intent: start_interview
+      - action: utter_start_interview
+      - action: interview_form
+      - active_loop: interview_form
+      - user: |
+          Data Scientist
+        intent: provide_multiple_fields
+      - slot_was_set:
+          - target_role: data_scientist
+      - user: |
+          4 года опыта
+        intent: provide_exp
+      - slot_was_set:
+          - experience_years: 4.0
+      - user: |
+          Python, SQL, ML, sklearn, PyTorch, статистика
+        intent: provide_skills
+      - user: |
+          обучал ML модель для прогноза оттока и делал эксперименты
+        intent: provide_projects
+      - user: |
+          разработчик
+        intent: provide_projects
+      - user: |
+          магистратура по машинному обучению
+        intent: provide_education
+      - user: |
+          b2
+        intent: provide_english
+      - user: |
+          remote
+        intent: provide_work_format
+      - user: |
+          от 300к
+        intent: provide_salary
+      - user: |
+          готов через две недели
+        intent: provide_availability
+      - action: interview_form
+      - active_loop: null
+      - action: action_rank_candidate
 
-- story: data engineer with change answer
-  steps:
-    - user: |
-        начать интервью
-      intent: start_interview
-    - action: utter_start_interview
-    - action: interview_form
-    - active_loop: interview_form
-    - user: |
-        измени роль на Data Engineer
-      intent: change_answer
-    - action: action_change_answer
-    - action: interview_form
-    - active_loop: interview_form
+  - story: data engineer with change answer
+    steps:
+      - user: |
+          начать интервью
+        intent: start_interview
+      - action: utter_start_interview
+      - action: interview_form
+      - active_loop: interview_form
+      - user: |
+          измени роль на Data Engineer
+        intent: change_answer
+      - action: action_change_answer
+      - action: interview_form
+      - active_loop: interview_form
 
-- story: out of scope during interview
-  steps:
-    - user: |
-        начать интервью
-      intent: start_interview
-    - action: utter_start_interview
-    - action: interview_form
-    - active_loop: interview_form
-    - user: |
-        какая погода?
-      intent: out_of_scope
-    - action: utter_out_of_scope
-    - action: interview_form
-    - active_loop: interview_form
+  - story: out of scope during interview
+    steps:
+      - user: |
+          начать интервью
+        intent: start_interview
+      - action: utter_start_interview
+      - action: interview_form
+      - active_loop: interview_form
+      - user: |
+          какая погода?
+        intent: out_of_scope
+      - action: utter_out_of_scope
+      - action: interview_form
+      - active_loop: interview_form
 
-- story: tie breaker answer
-  steps:
-    - user: |
-        мне ближе production и инфраструктура
-      intent: provide_tie_breaker
-    - action: action_apply_tie_breaker
->>>>>>> main
+  - story: tie breaker answer
+    steps:
+      - user: |
+          мне ближе production и инфраструктура
+        intent: provide_tie_breaker
+      - action: action_apply_tie_breaker
