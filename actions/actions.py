@@ -45,23 +45,40 @@ ROLE_ALIASES = {
     "проектный менеджер": "project_manager",
     "менеджер проекта": "project_manager",
     "data analyst": "data_analyst",
+    "dataanalyst": "data_analyst",
     "data_analyst": "data_analyst",
+    "да": "data_analyst",
     "аналитик": "data_analyst",
     "аналитик данных": "data_analyst",
+    "аналитика данных": "data_analyst",
+    "дата аналитик": "data_analyst",
+    "дата аналитика": "data_analyst",
+    "дата аналетик": "data_analyst",
     "bi аналитик": "data_analyst",
     "data engineer": "data_engineer",
+    "dataengineer": "data_engineer",
     "data_engineer": "data_engineer",
+    "де": "data_engineer",
     "инженер данных": "data_engineer",
     "дата инженер": "data_engineer",
+    "дата инженера": "data_engineer",
     "data scientist": "data_scientist",
+    "datascientist": "data_scientist",
     "data_scientist": "data_scientist",
     "ds": "data_scientist",
+    "дс": "data_scientist",
     "дата сайентист": "data_scientist",
+    "дата сайентиста": "data_scientist",
+    "датасаентист": "data_scientist",
+    "дата саентист": "data_scientist",
     "ml engineer": "data_scientist",
     "mlops": "mlops_engineer",
     "mlops engineer": "mlops_engineer",
     "mlops_engineer": "mlops_engineer",
     "инженер mlops": "mlops_engineer",
+    "млопс": "mlops_engineer",
+    "млопса": "mlops_engineer",
+    "мл ops": "mlops_engineer",
 }
 
 SKILL_ALIASES = {
@@ -107,6 +124,8 @@ SKILL_ALIASES = {
     "a/b": "ab_testing",
     "ab тест": "ab_testing",
     "статист": "statistics",
+    "аналитика": "statistics",
+    "анализ данных": "statistics",
     "jira": "jira",
     "scrum": "scrum",
     "agile": "agile",
@@ -144,6 +163,8 @@ SKILL_ALIASES = {
     "кодить": "coding_basic",
     "код": "coding_basic",
     "программир": "coding_basic",
+    "имею программировать": "coding_basic",
+    "умею программировать": "coding_basic",
     "ответствен": "ownership",
     "организ": "ownership",
 }
@@ -219,6 +240,41 @@ ROLE_SKILL_WEIGHTS = {
     },
 }
 
+SKILL_LABELS = {
+    "ab_testing": "A/B-тесты",
+    "airflow": "Airflow",
+    "agile": "Agile",
+    "case_solving": "бизнес-кейсы",
+    "ci_cd": "CI/CD",
+    "coding_basic": "программирование",
+    "communication": "коммуникация",
+    "docker": "Docker",
+    "dwh": "хранилища данных",
+    "etl": "ETL",
+    "excel": "Excel",
+    "jira": "Jira",
+    "kafka": "Kafka",
+    "kubernetes": "Kubernetes",
+    "ml": "ML",
+    "mlflow": "MLflow",
+    "monitoring": "мониторинг",
+    "pandas": "pandas",
+    "people_management": "управление людьми",
+    "planning": "планирование",
+    "power_bi": "Power BI",
+    "presentation": "презентация решений",
+    "python": "Python",
+    "requirements": "сбор требований",
+    "risk_management": "управление рисками",
+    "scrum": "Scrum",
+    "sklearn": "sklearn",
+    "spark": "Spark",
+    "sql": "SQL",
+    "stakeholders": "работа со стейкхолдерами",
+    "statistics": "статистика и аналитика",
+    "tableau": "Tableau",
+}
+
 SALARY_LIMITS = {
     "project_manager": 320000,
     "data_analyst": 240000,
@@ -245,8 +301,26 @@ def text_of(tracker: Tracker) -> str:
     return (tracker.latest_message.get("text") or "").strip()
 
 
+def normalize_typos(text: str) -> str:
+    replacements = {
+        "учавств": "участв",
+        "учавствовал": "участвовал",
+        "учавствовала": "участвовала",
+        "имею программировать": "умею программировать",
+        "след.": "следующем",
+        "след мес": "следующем месяце",
+        "сл. месяце": "следующем месяце",
+        "вуз": "университет",
+        "очно": "офис",
+    }
+    result = text
+    for source, target in replacements.items():
+        result = result.replace(source, target)
+    return result
+
+
 def lower_text(tracker: Tracker) -> str:
-    return text_of(tracker).lower().replace("ё", "е")
+    return normalize_typos(text_of(tracker).lower().replace("ё", "е"))
 
 
 def entities(tracker: Tracker, name: str) -> List[Any]:
@@ -267,8 +341,9 @@ def unique(values: List[Any]) -> List[Any]:
 def normalize_role(value: Any) -> str:
     if not value:
         return "unknown"
-    raw = str(value).strip().lower().replace("-", " ").replace("_", " ")
-    return ROLE_ALIASES.get(raw, "unknown")
+    raw = str(value).strip().lower()
+    normalized = raw.replace("-", " ").replace("_", " ")
+    return ROLE_ALIASES.get(raw) or ROLE_ALIASES.get(normalized, "unknown")
 
 
 def infer_role(text: str) -> str:
@@ -355,7 +430,7 @@ def infer_projects(text: str, explicit: List[Any]) -> List[str]:
         return ["no_relevant_projects"]
     checks = {
         "etl": ["etl", "пайплайн", "pipeline", "airflow", "spark", "kafka"],
-        "analytics": ["дашборд", "метрик", "bi", "ab", "a/b", "аналит"],
+        "analytics": ["дашборд", "метрик", "bi", "ab", "a/b", "аналит", "поведен", "выручк", "потребител", "маркетплейс"],
         "ml_model": ["модель", "ml", "классификац", "регресс", "прогноз", "рекоменд"],
         "production_ml": ["production", "продакшн", "деплой", "инференс", "monitoring", "мониторинг"],
         "management": ["управлял", "команд", "срок", "рис", "стейкхол", "stakeholder"],
@@ -457,7 +532,7 @@ def normalize_work_format(text: str, value: Any = None) -> str:
         return "remote"
     if any(word in raw for word in ["hybrid", "гибрид"]):
         return "hybrid"
-    if any(word in raw for word in ["office", "офис"]):
+    if any(word in raw for word in ["office", "офис", "очно"]):
         return "office"
     if any(word in raw for word in ["любой", "без разницы", "any"]):
         return "any"
@@ -470,7 +545,7 @@ def normalize_availability(text: str, value: Any = None) -> str:
         return "available_now"
     if any(word in raw for word in ["три месяца", "3 месяца", "не раньше", "не готов", "позже"]):
         return "available_not_soon"
-    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты"]):
+    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты", "следующем"]):
         return "available_soon"
     return "unknown"
 
@@ -768,30 +843,44 @@ def human_reasons(result: Dict[str, Any]) -> List[str]:
         item = reason
         for source, target in replacements.items():
             item = item.replace(source, target)
+        if item.startswith("релевантные навыки:"):
+            raw_skills = [skill.strip() for skill in item.split(":", 1)[1].split(",")]
+            labels = [SKILL_LABELS.get(skill, skill) for skill in raw_skills]
+            item = "релевантные навыки: " + ", ".join(labels)
         cleaned.append(item)
     return cleaned[:3] or ["в ответах есть несколько релевантных сигналов для этой роли"]
 
 
-def human_risks(result: Dict[str, Any]) -> List[str]:
-    risks = []
+def human_follow_up_questions(result: Dict[str, Any]) -> List[str]:
+    questions = []
     for risk in result.get("risk_flags") or []:
         if risk == "критичных рисков не обнаружено":
             continue
-        risk = risk.replace("низкое соответствие всем пяти ролям", "пока мало признаков сильного совпадения с открытыми ролями")
-        risk = risk.replace("мало релевантного опыта", "релевантного опыта может быть недостаточно для части вакансий")
-        risk = risk.replace("зарплатные ожидания выше типичного диапазона роли", "зарплатные ожидания могут потребовать отдельного согласования")
-        risk = risk.replace("английский может ограничить работу с документацией и международной командой", "английский может потребовать уточнения на следующем этапе")
-        risk = risk.replace("кандидат доступен не скоро", "срок выхода может быть не для всех команд удобен")
-        risk = risk.replace("не хватает ключевых сигналов роли:", "стоит дополнительно раскрыть опыт с:")
-        risks.append(risk)
-    return risks[:3]
+        if risk.startswith("не хватает ключевых сигналов роли:"):
+            missing = ", ".join(SKILL_LABELS.get(skill.strip(), skill.strip()) for skill in risk.split(":", 1)[1].split(","))
+            questions.append(f"Можете подробнее рассказать про опыт с {missing}?")
+        elif risk == "желаемая роль отличается от рекомендованной":
+            questions.append("Какая роль вам все-таки ближе: выбранная изначально или та, к которой оказался ближе опыт?")
+        elif risk == "зарплатные ожидания выше типичного диапазона роли":
+            questions.append("Насколько гибкая ваша зарплатная вилка?")
+        elif risk == "английский может ограничить работу с документацией и международной командой":
+            questions.append("Какой уровень английского можно подтвердить на интервью?")
+        elif risk == "кандидат доступен не скоро":
+            questions.append("Можно ли будет обсудить более раннюю дату выхода?")
+        elif risk == "нет признаков проектов промышленной сложности":
+            questions.append("Были ли проекты с production-нагрузкой, реальными пользователями или бизнес-метриками?")
+        elif risk == "мало релевантного опыта":
+            questions.append("Есть ли стажировки, учебные или pet-проекты, которые стоит учесть?")
+        elif risk == "низкое соответствие всем пяти ролям":
+            questions.append("Есть ли еще релевантный опыт, который мы не обсудили?")
+    return questions[:3]
 
 
 def final_message(result: Dict[str, Any]) -> str:
     recommended = ROLE_LABELS[result["recommended_role"]]
     alternatives = [item["label"] for item in result["ranking"][1:3]]
-    reasons = "; ".join(human_reasons(result))
-    risks = human_risks(result)
+    reasons = human_reasons(result)
+    questions = human_follow_up_questions(result)
     if result["decision_status"] == "fit":
         status = f"По вашим ответам лучше всего подходит направление {recommended}."
         next_step_text = "Следующий шаг: передать профиль на техническое интервью."
@@ -803,13 +892,18 @@ def final_message(result: Dict[str, Any]) -> str:
         next_step_text = "Следующий шаг: рекрутер сможет вернуться к профилю, если появится более подходящая вакансия."
     parts = [
         "Спасибо, интервью завершено.",
-        status,
-        f"Также можно рассмотреть: {', '.join(alternatives)}.",
-        f"Почему: {reasons}.",
+        "",
+        "Итог:",
+        f"- {status}",
+        f"- Также можно рассмотреть: {', '.join(alternatives)}.",
+        "",
+        "Почему:",
     ]
-    if risks:
-        parts.append("Что может потребовать уточнения: " + "; ".join(risks) + ".")
-    parts.append(next_step_text)
+    parts.extend(f"- {reason}." for reason in reasons)
+    if questions:
+        parts.extend(["", "Уточняющие вопросы:"])
+        parts.extend(f"- {question}" for question in questions)
+    parts.extend(["", next_step_text])
     return "\n".join(parts)
 
 
