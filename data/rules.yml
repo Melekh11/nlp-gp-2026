@@ -1,248 +1,230 @@
 version: "3.1"
 
 rules:
-<<<<<<< HEAD
+  - rule: Start interview
+    steps:
+      - intent: start_interview
+      - action: utter_start_interview
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Say goodbye anytime the user says goodbye
-  steps:
-  - intent: goodbye
-  - action: utter_goodbye
+  - rule: Submit interview form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - action: interview_form
+      - active_loop: null
+      - action: action_rank_candidate
 
-- rule: Say 'I am a bot' anytime the user challenges
-  steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
+  - rule: Stop interview
+    steps:
+      - intent: stop_interview
+      - action: utter_stop_interview
+      - action: action_deactivate_loop
+      - active_loop: null
 
-- rule: Greet the user when they start the conversation
-  steps:
-  - intent: start
-  - action: utter_greet
-=======
-- rule: Start interview
-  steps:
-    - intent: start_interview
-    - action: utter_start_interview
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
 
-- rule: Submit interview form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - action: interview_form
-    - active_loop: null
-    - action: action_rank_candidate
+  - rule: Fallback
+    steps:
+      - intent: nlu_fallback
+      - action: utter_default
 
-- rule: Stop interview
-  steps:
-    - intent: stop_interview
-    - action: utter_stop_interview
-    - action: action_deactivate_loop
-    - active_loop: null
+  - rule: Out of scope
+    steps:
+      - intent: out_of_scope
+      - action: utter_out_of_scope
 
-- rule: Goodbye
-  steps:
-    - intent: goodbye
-    - action: utter_goodbye
+  - rule: Out of scope during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: out_of_scope
+      - action: utter_out_of_scope
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Fallback
-  steps:
-    - intent: nlu_fallback
-    - action: utter_default
+  - rule: Repeat question
+    steps:
+      - intent: repeat_question
+      - action: action_repeat_question
 
-- rule: Out of scope
-  steps:
-    - intent: out_of_scope
-    - action: utter_out_of_scope
+  - rule: Skip question during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: skip_question
+      - action: action_skip_question
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Out of scope during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: out_of_scope
-    - action: utter_out_of_scope
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle experience answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_exp
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Repeat question
-  steps:
-    - intent: repeat_question
-    - action: action_repeat_question
+  - rule: Handle skills answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_skills
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Skip question during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: skip_question
-    - action: action_skip_question
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle projects answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_projects
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle experience answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_exp
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle salary answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_salary
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle skills answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_skills
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle availability answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_availability
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle projects answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_projects
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle education answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_education
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle salary answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_salary
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle english answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_english
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle availability answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_availability
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle work format answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_work_format
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle education answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_education
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle combined answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: provide_multiple_fields
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle english answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_english
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle affirm during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: affirm
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle work format answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_work_format
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Handle deny during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: deny
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle combined answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: provide_multiple_fields
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Change answer
+    steps:
+      - intent: change_answer
+      - action: action_change_answer
 
-- rule: Handle affirm during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: affirm
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Change answer during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: change_answer
+      - action: action_change_answer
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Handle deny during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: deny
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Answer tie breaker
+    steps:
+      - intent: provide_tie_breaker
+      - action: action_apply_tie_breaker
 
-- rule: Change answer
-  steps:
-    - intent: change_answer
-    - action: action_change_answer
+  - rule: Ask roles
+    steps:
+      - intent: ask_roles
+      - action: utter_roles
 
-- rule: Change answer during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: change_answer
-    - action: action_change_answer
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Ask roles during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: ask_roles
+      - action: utter_roles
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Answer tie breaker
-  steps:
-    - intent: provide_tie_breaker
-    - action: action_apply_tie_breaker
+  - rule: Ask process
+    steps:
+      - intent: ask_process
+      - action: utter_process
 
-- rule: Ask roles
-  steps:
-    - intent: ask_roles
-    - action: utter_roles
+  - rule: Ask process during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: ask_process
+      - action: utter_process
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Ask roles during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: ask_roles
-    - action: utter_roles
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Ask clarification
+    steps:
+      - intent: ask_clarification
+      - action: utter_clarification
 
-- rule: Ask process
-  steps:
-    - intent: ask_process
-    - action: utter_process
+  - rule: Ask clarification during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: ask_clarification
+      - action: utter_clarification
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Ask process during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: ask_process
-    - action: utter_process
-    - action: interview_form
-    - active_loop: interview_form
+  - rule: Ask role details
+    steps:
+      - intent: ask_role_details
+      - action: action_show_role_details
 
-- rule: Ask clarification
-  steps:
-    - intent: ask_clarification
-    - action: utter_clarification
+  - rule: Ask role details during form
+    condition:
+      - active_loop: interview_form
+    steps:
+      - intent: ask_role_details
+      - action: action_show_role_details
+      - action: interview_form
+      - active_loop: interview_form
 
-- rule: Ask clarification during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: ask_clarification
-    - action: utter_clarification
-    - action: interview_form
-    - active_loop: interview_form
-
-- rule: Ask role details
-  steps:
-    - intent: ask_role_details
-    - action: action_show_role_details
-
-- rule: Ask role details during form
-  condition:
-    - active_loop: interview_form
-  steps:
-    - intent: ask_role_details
-    - action: action_show_role_details
-    - action: interview_form
-    - active_loop: interview_form
-
-- rule: Ask next step
-  steps:
-    - intent: ask_next_step
-    - action: action_show_next_step
->>>>>>> main
+  - rule: Ask next step
+    steps:
+      - intent: ask_next_step
+      - action: action_show_next_step
