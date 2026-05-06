@@ -1,9 +1,21 @@
 version: "3.1"
 
 rules:
+- rule: Greet
+  steps:
+    - intent: greet
+    - action: utter_greet
+
 - rule: Start interview
   steps:
     - intent: start_interview
+    - action: utter_start_interview
+    - action: interview_form
+    - active_loop: interview_form
+
+- rule: Affirm starts interview
+  steps:
+    - intent: affirm
     - action: utter_start_interview
     - action: interview_form
     - active_loop: interview_form
@@ -32,6 +44,15 @@ rules:
   steps:
     - intent: nlu_fallback
     - action: utter_default
+
+- rule: Fallback during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: nlu_fallback
+    - action: action_contextual_fallback
+    - action: interview_form
+    - active_loop: interview_form
 
 - rule: Out of scope
   steps:
@@ -167,6 +188,38 @@ rules:
   steps:
     - intent: provide_tie_breaker
     - action: action_apply_tie_breaker
+
+- rule: Answer pending follow up
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_follow_up
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with skills
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_skills
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with projects
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_projects
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with combined answer
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_multiple_fields
+    - action: action_apply_follow_up
 
 - rule: Ask roles
   steps:

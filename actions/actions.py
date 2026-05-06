@@ -33,15 +33,21 @@ ROLE_DETAILS = {
 
 ROLE_ALIASES = {
     "pm": "project_manager",
+    "p m": "project_manager",
     "project manager": "project_manager",
     "project_manager": "project_manager",
+    "projectmanager": "project_manager",
     "проджект": "project_manager",
     "проджект менеджер": "project_manager",
     "проджект менеджера": "project_manager",
+    "проджект менеджером": "project_manager",
     "продж": "project_manager",
     "проджа": "project_manager",
+    "прожект": "project_manager",
+    "прожект менеджер": "project_manager",
     "пм": "project_manager",
     "пму": "project_manager",
+    "пиэм": "project_manager",
     "проектный менеджер": "project_manager",
     "менеджер проекта": "project_manager",
     "data analyst": "data_analyst",
@@ -55,6 +61,9 @@ ROLE_ALIASES = {
     "дата аналитика": "data_analyst",
     "дата аналетик": "data_analyst",
     "bi аналитик": "data_analyst",
+    "би аналитик": "data_analyst",
+    "продуктовый аналитик": "data_analyst",
+    "аналитик продукта": "data_analyst",
     "data engineer": "data_engineer",
     "dataengineer": "data_engineer",
     "data_engineer": "data_engineer",
@@ -62,22 +71,34 @@ ROLE_ALIASES = {
     "инженер данных": "data_engineer",
     "дата инженер": "data_engineer",
     "дата инженера": "data_engineer",
+    "дата инженером": "data_engineer",
+    "дата инжинер": "data_engineer",
+    "инженер данных": "data_engineer",
+    "инжинер данных": "data_engineer",
     "data scientist": "data_scientist",
     "datascientist": "data_scientist",
     "data_scientist": "data_scientist",
     "ds": "data_scientist",
     "дс": "data_scientist",
+    "дата сайнтист": "data_scientist",
     "дата сайентист": "data_scientist",
     "дата сайентиста": "data_scientist",
     "датасаентист": "data_scientist",
     "дата саентист": "data_scientist",
     "ml engineer": "data_scientist",
+    "machine learning engineer": "data_scientist",
+    "мл инженер": "data_scientist",
+    "эмельщик": "data_scientist",
+    "эмель инженер": "data_scientist",
     "mlops": "mlops_engineer",
     "mlops engineer": "mlops_engineer",
     "mlops_engineer": "mlops_engineer",
     "инженер mlops": "mlops_engineer",
     "млопс": "mlops_engineer",
     "млопса": "mlops_engineer",
+    "млопс инженер": "mlops_engineer",
+    "эмэлопс": "mlops_engineer",
+    "эмельопс": "mlops_engineer",
     "мл ops": "mlops_engineer",
 }
 
@@ -85,53 +106,104 @@ SKILL_ALIASES = {
     "python": "python",
     "питон": "python",
     "пайтон": "python",
+    "py": "python",
+    "python3": "python",
     "sql": "sql",
+    "сиквел": "sql",
+    "эс кью эл": "sql",
+    "postgres": "sql",
+    "postgresql": "sql",
+    "clickhouse": "sql",
     "pandas": "pandas",
+    "пандас": "pandas",
     "numpy": "numpy",
+    "нампай": "numpy",
     "sklearn": "sklearn",
     "scikit": "sklearn",
+    "scikit learn": "sklearn",
+    "сайкит": "sklearn",
     "pytorch": "pytorch",
+    "torch": "pytorch",
+    "пайторч": "pytorch",
     "tensorflow": "tensorflow",
+    "тензорфлоу": "tensorflow",
     "машинное обучение": "ml",
     "machine learning": "ml",
     "ml": "ml",
+    "мл": "ml",
+    "мл ": "ml",
+    "эмель": "ml",
+    "эмел": "ml",
+    "машинка": "ml",
+    "модели": "ml",
     "airflow": "airflow",
+    "эйрфлоу": "airflow",
+    "аирфлоу": "airflow",
     "spark": "spark",
+    "спарк": "spark",
     "kafka": "kafka",
+    "кафка": "kafka",
     "etl": "etl",
     "elt": "etl",
+    "етл": "etl",
+    "итл": "etl",
     "dwh": "dwh",
+    "data warehouse": "dwh",
+    "дата ворхаус": "dwh",
     "хранилище": "dwh",
     "витрин": "dwh",
     "docker": "docker",
     "докер": "docker",
     "докера": "docker",
+    "контейнер": "docker",
     "kubernetes": "kubernetes",
     "кубер": "kubernetes",
     "кубером": "kubernetes",
+    "кубернетес": "kubernetes",
     "k8s": "kubernetes",
     "ci/cd": "ci_cd",
     "cicd": "ci_cd",
+    "ci cd": "ci_cd",
+    "сиай сиди": "ci_cd",
+    "пайплайн деплоя": "ci_cd",
     "mlflow": "mlflow",
+    "эмелфлоу": "mlflow",
     "dvc": "dvc",
     "monitoring": "monitoring",
     "мониторинг": "monitoring",
+    "наблюдаемость": "monitoring",
     "prometheus": "monitoring",
     "grafana": "monitoring",
     "tableau": "tableau",
+    "табло": "tableau",
     "power bi": "power_bi",
+    "powerbi": "power_bi",
+    "пауэр би": "power_bi",
+    "би": "power_bi",
     "excel": "excel",
+    "эксель": "excel",
+    "google sheets": "excel",
     "a/b": "ab_testing",
     "ab тест": "ab_testing",
+    "a b тест": "ab_testing",
+    "аб тест": "ab_testing",
+    "эксперимент": "ab_testing",
+    "гипотез": "ab_testing",
     "статист": "statistics",
     "аналитика": "statistics",
     "анализ данных": "statistics",
+    "метрик": "statistics",
+    "дашборд": "statistics",
     "jira": "jira",
+    "джира": "jira",
     "scrum": "scrum",
+    "скрам": "scrum",
     "agile": "agile",
+    "аджайл": "agile",
     "stakeholder": "stakeholders",
     "стейкхол": "stakeholders",
     "бизнес": "stakeholders",
+    "заказчик": "stakeholders",
     "управлять людьми": "people_management",
     "управление людьми": "people_management",
     "управлял людьми": "people_management",
@@ -283,9 +355,38 @@ SALARY_LIMITS = {
     "mlops_engineer": 380000,
 }
 
+ROLE_REQUIRED_SKILLS = {
+    "project_manager": {"stakeholders", "people_management", "communication", "planning", "risk_management", "scrum", "jira"},
+    "data_analyst": {"sql", "statistics", "ab_testing", "power_bi", "tableau", "excel"},
+    "data_engineer": {"sql", "python", "airflow", "spark", "kafka", "etl", "dwh"},
+    "data_scientist": {"python", "statistics", "ml", "sklearn", "pytorch", "tensorflow", "pandas"},
+    "mlops_engineer": {"docker", "kubernetes", "ci_cd", "mlflow", "monitoring", "python"},
+}
+
+ROLE_PROJECT_SIGNALS = {
+    "project_manager": {"management"},
+    "data_analyst": {"analytics"},
+    "data_engineer": {"etl"},
+    "data_scientist": {"ml_model"},
+    "mlops_engineer": {"production_ml"},
+}
+
+SCORING_WEIGHTS = {
+    "experience": 20,
+    "skills": 35,
+    "projects": 20,
+    "project_role": 8,
+    "target_role": 5,
+    "education": 6,
+    "english": 4,
+    "complexity": 2,
+    "tie_breaker": 7,
+}
+
 QUESTION_BY_SLOT = {
+    "candidate_name": "Как вас зовут? Напишите, пожалуйста, фамилию и имя.",
     "target_role": "На какую позицию вы хотите пройти собеседование?",
-    "experience_years": "Сколько лет релевантного опыта у вас есть?",
+    "experience_years": "Сколько лет или месяцев релевантной практики можно учитывать? Ответьте числом, например 3.",
     "skills": "Перечислите ключевые навыки и инструменты.",
     "project_types": "Расскажите о 1-2 самых релевантных проектах: тип проекта, данные, инструменты, результат.",
     "project_role": "Какую роль вы выполняли в проектах: менеджер, аналитик, разработчик или лид?",
@@ -323,6 +424,12 @@ def lower_text(tracker: Tracker) -> str:
     return normalize_typos(text_of(tracker).lower().replace("ё", "е"))
 
 
+def normalize_candidate_name(text: str) -> str:
+    cleaned = re.sub(r"\s+", " ", text.strip())
+    cleaned = re.sub(r"^(меня зовут|я|это)\s+", "", cleaned, flags=re.IGNORECASE)
+    return cleaned[:120]
+
+
 def entities(tracker: Tracker, name: str) -> List[Any]:
     return [e.get("value") for e in tracker.latest_message.get("entities", []) if e.get("entity") == name]
 
@@ -347,8 +454,16 @@ def normalize_role(value: Any) -> str:
 
 
 def infer_role(text: str) -> str:
-    for alias, role in ROLE_ALIASES.items():
-        if alias in text:
+    for alias, role in sorted(ROLE_ALIASES.items(), key=lambda item: len(item[0]), reverse=True):
+        if alias == "да":
+            continue
+        normalized_alias = alias.strip()
+        if len(normalized_alias) <= 3:
+            pattern = r"(?<![\wа-яА-Я])" + re.escape(normalized_alias) + r"(?![\wа-яА-Я])"
+            if re.search(pattern, text):
+                return role
+            continue
+        if normalized_alias in text:
             return role
     if any(token in text for token in ["не знаю", "подбери", "не определился", "любая"]):
         return "unknown"
@@ -373,10 +488,17 @@ def parse_years(text: str, values: List[Any]) -> Optional[float]:
         number = parse_number(value)
         if number is not None and number <= 50:
             return number
-    if any(phrase in text for phrase in ["без опыта", "нет опыта", "опыта нет", "не было опыта", "давай пропустим", "пропустим"]):
+    if any(phrase in text for phrase in ["без опыта", "нет опыта", "опыта нет", "не было опыта", "давай пропустим", "пропустим", "никогда", "не работал", "не работала", "не занимался", "не занималась", "ноль"]):
         return 0.0
     if "меньше года" in text:
         return 0.5
+    if any(phrase in text for phrase in ["полгода", "пол года", "6 месяцев", "шесть месяцев"]):
+        return 0.5
+    month_match = re.search(r"\b(\d+([\.,]\d+)?)\s*(месяц|месяца|месяцев)\b", text)
+    if month_match:
+        months = float(month_match.group(1).replace(",", "."))
+        if months <= 600:
+            return round(months / 12, 1)
     range_match = re.search(r"\b(\d+([\.,]\d+)?)\s*[-–]\s*(\d+([\.,]\d+)?)\b", text)
     if range_match:
         left = float(range_match.group(1).replace(",", "."))
@@ -386,6 +508,36 @@ def parse_years(text: str, values: List[Any]) -> Optional[float]:
     match = re.search(r"(\d+([\.,]\d+)?)\s*(год|лет|года)", text)
     if match:
         return float(match.group(1).replace(",", "."))
+    bare_number = re.fullmatch(r"\s*(\d+([\.,]\d+)?)\s*", text)
+    if bare_number:
+        number = float(bare_number.group(1).replace(",", "."))
+        if number <= 50:
+            return number
+    return None
+
+
+def extract_name_from_text(text: str) -> Optional[str]:
+    original = re.sub(r"\s+", " ", text.strip())
+    if not original:
+        return None
+    patterns = [
+        r"(?:фио|фамилия и имя|имя)\s*[:\-]\s*([А-ЯЁA-Zа-яёa-z]+(?:\s+[А-ЯЁA-Zа-яёa-z]+){1,2})",
+        r"(?:меня зовут|я)\s+([А-ЯЁA-Zа-яёa-z]+(?:\s+[А-ЯЁA-Zа-яёa-z]+){1,2})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if match:
+            return normalize_candidate_name(match.group(1))
+    first_line = text.strip().splitlines()[0] if text.strip() else original
+    first_line = re.sub(r"\s+", " ", first_line.strip())
+    if len(first_line.split()) in {2, 3, 4} and not any(char.isdigit() for char in first_line):
+        lowered = first_line.lower()
+        if not any(signal in lowered for signal in ["привет", "хочу", "опыт", "python", "sql", "аналит", "инженер", "менедж"]):
+            return normalize_candidate_name(first_line)
+    if len(original.split()) in {2, 3, 4} and not any(char.isdigit() for char in original):
+        lowered = original.lower()
+        if not any(signal in lowered for signal in ["привет", "хочу", "опыт", "python", "sql", "аналит", "инженер", "менедж"]):
+            return normalize_candidate_name(original)
     return None
 
 
@@ -431,8 +583,8 @@ def infer_projects(text: str, explicit: List[Any]) -> List[str]:
     checks = {
         "etl": ["etl", "пайплайн", "pipeline", "airflow", "spark", "kafka"],
         "analytics": ["дашборд", "метрик", "bi", "ab", "a/b", "аналит", "поведен", "выручк", "потребител", "маркетплейс"],
-        "ml_model": ["модель", "ml", "классификац", "регресс", "прогноз", "рекоменд"],
-        "production_ml": ["production", "продакшн", "деплой", "инференс", "monitoring", "мониторинг"],
+        "ml_model": ["модель", "ml", "мл", "эмель", "классификац", "регресс", "прогноз", "рекоменд", "нейрон", "nlp", "cv"],
+        "production_ml": ["production", "продакшн", "деплой", "инференс", "serving", "monitoring", "мониторинг", "эксплуатац"],
         "management": ["управлял", "команд", "срок", "рис", "стейкхол", "stakeholder"],
         "pet_project": ["pet", "учебн", "курсов", "домашн"],
     }
@@ -460,6 +612,10 @@ def has_project_context(text: str) -> bool:
             "занималась",
             "production",
             "продакшн",
+            "деплой",
+            "инференс",
+            "эмель",
+            "мл",
         ]
     )
 
@@ -511,18 +667,20 @@ def normalize_english(text: str, value: Any = None) -> str:
         if level in raw:
             return level
     clean = re.sub(r"[^\wа-яА-Я]+", " ", raw).strip()
-    if clean in {"да", "ага", "угу", "вполне", "норм", "нормально"}:
+    if clean in {"да", "ага", "угу", "вполне", "норм", "нормально", "спокойно"}:
         return "b1"
     if clean in {"нет", "неа", "никак"}:
         return "none"
-    if any(word in raw for word in ["нет", "никак", "не знаю", "незнаю"]):
+    if any(word in raw for word in ["нет", "никак", "не знаю", "незнаю", "не использую", "не читаю"]):
         return "none"
-    if any(word in raw for word in ["свобод", "advanced", "fluent"]):
+    if any(word in raw for word in ["свобод", "advanced", "fluent", "отлично"]):
         return "c1"
-    if any(word in raw for word in ["upper intermediate", "выше среднего"]):
+    if any(word in raw for word in ["upper intermediate", "upper", "выше среднего", "уверенный", "очень хорошо", "без проблем", "легко читаю", "хорошо говорю"]):
         return "b2"
-    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально", "вполне"]):
+    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально", "вполне", "спокойно", "хорошо", "читаю", "переписываюсь"]):
         return "b1"
+    if any(word in raw for word in ["со словарем", "базовый", "начальный", "плохо", "слабо"]):
+        return "a2"
     return "unknown"
 
 
@@ -545,7 +703,7 @@ def normalize_availability(text: str, value: Any = None) -> str:
         return "available_now"
     if any(word in raw for word in ["три месяца", "3 месяца", "не раньше", "не готов", "позже"]):
         return "available_not_soon"
-    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты", "следующем"]):
+    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты", "отработки", "следующем", "после майских", "три недели"]):
         return "available_soon"
     return "unknown"
 
@@ -570,6 +728,36 @@ def infer_education(text: str) -> Tuple[List[str], List[str]]:
     return unique(levels), unique(fields)
 
 
+def has_education_context(text: str) -> bool:
+    return any(
+        word in text
+        for word in [
+            "образован",
+            "бакалавр",
+            "бакалавриат",
+            "магистр",
+            "магистрат",
+            "университет",
+            "институт",
+            "вуз",
+            "курс",
+            "сертифик",
+            "computer science",
+            "компьютерн",
+            "математ",
+            "физмат",
+        ]
+    )
+
+
+def education_snippet(original_text: str) -> str:
+    parts = re.split(r"(?<=[.!?])\s+", original_text.strip())
+    selected = [part.strip() for part in parts if has_education_context(part.lower().replace("ё", "е"))]
+    if selected:
+        return " ".join(selected)[:500]
+    return original_text.strip()[:500]
+
+
 def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     text = lower_text(tracker)
     requested_slot = tracker.get_slot("requested_slot")
@@ -583,7 +771,7 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     if years is not None:
         facts["experience_years"] = years
     latest_intent = (tracker.latest_message.get("intent") or {}).get("name")
-    skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=requested_slot == "skills") if requested_slot == "skills" or latest_intent in {"provide_skills", "provide_multiple_fields"} else []
+    skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=requested_slot == "skills") if requested_slot == "skills" or latest_intent in {"provide_skills", "provide_multiple_fields"} or entities(tracker, "skill") else []
     if skills:
         current = tracker.get_slot("skills") or []
         facts["skills"] = unique(current + skills)
@@ -595,23 +783,72 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0]) if requested_slot == "project_role" or any(word in text for word in ["лид", "менедж", "разработ", "аналит", "управлял", "управляла"]) else "unknown"
     if project_role != "unknown":
         facts["project_role"] = project_role
-    english = normalize_english(text, (entities(tracker, "english_level") or [None])[0]) if requested_slot == "english_level" or entities(tracker, "english_level") else "unknown"
+    english_signal = requested_slot == "english_level" or entities(tracker, "english_level") or "англий" in text or "english" in text or bool(re.search(r"\b[abc][12]\b", text))
+    english = normalize_english(text, (entities(tracker, "english_level") or [None])[0]) if english_signal else "unknown"
     if english != "unknown":
         facts["english_level"] = english
-    work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0]) if requested_slot == "work_format" or entities(tracker, "work_format") else "unknown"
+    work_signal = requested_slot == "work_format" or entities(tracker, "work_format") or any(word in text for word in ["удален", "remote", "офис", "гибрид", "очно", "дистан"])
+    work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0]) if work_signal else "unknown"
     if work_format != "unknown":
         facts["work_format"] = work_format
-    availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0]) if requested_slot == "availability" or entities(tracker, "availability") else "unknown"
+    availability_signal = requested_slot == "availability" or entities(tracker, "availability") or any(word in text for word in ["готов выйти", "готова выйти", "выйти", "приступить", "отработка"])
+    availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0]) if availability_signal else "unknown"
     if availability != "unknown":
         facts["availability"] = availability
     if requested_slot == "salary_expectation_min" and "миллион" in text:
         facts["salary_expectation_min"] = 1000000.0
         facts["salary_expectation_max"] = None
         return facts
-    salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount")) if requested_slot == "salary_expectation_min" or entities(tracker, "salary_amount") else (None, None)
+    salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount"))
     if salary_min is not None:
         facts["salary_expectation_min"] = salary_min
         facts["salary_expectation_max"] = salary_max
+    if requested_slot == "education_text" or has_education_context(text):
+        levels, fields = infer_education(text)
+        if levels or fields:
+            facts["education_text"] = education_snippet(text_of(tracker))
+            facts["education_level"] = levels
+            facts["education_field"] = fields
+    return facts
+
+
+def contextual_prompt(requested_slot: Optional[str]) -> str:
+    prompts = {
+        "candidate_name": "Напишите, пожалуйста, фамилию и имя.",
+        "target_role": "Уточните позицию: Project Manager, Data Analyst, Data Engineer, Data Scientist или MLOps Engineer.",
+        "experience_years": "Уточните срок релевантной практики: например 0, 6 месяцев, 1.5 или 3 года.",
+        "skills": "Назовите несколько навыков, инструментов или сильных сторон, которые важны для этой роли.",
+        "project_types": "Опишите один релевантный проект: задача, ваш вклад и результат. Если проектов не было, так и напишите.",
+        "project_role": "Уточните вашу роль в проекте: анализировали, разрабатывали, управляли или лидировали?",
+        "education_text": "Напишите образование, курсы или профильную подготовку. Если профильного обучения нет, можно так и ответить.",
+        "english_level": "Уточните английский: например A2, B1, B2, 'читаю документацию', 'говорю свободно' или 'не использую'.",
+        "work_format": "Уточните формат работы: офис, удаленно, гибрид или любой вариант.",
+        "salary_expectation_min": "Укажите зарплату числом или диапазоном, например 200к или 200-300 тысяч.",
+        "availability": "Уточните срок выхода: сразу, через две недели, в следующем месяце или позже.",
+    }
+    return prompts.get(requested_slot, "Уточните ответ, пожалуйста.")
+
+
+def slot_facts_from_text(tracker: Tracker) -> Dict[str, Any]:
+    text = lower_text(tracker)
+    requested_slot = tracker.get_slot("requested_slot")
+    facts = extract_facts(tracker)
+    if requested_slot == "candidate_name":
+        name = extract_name_from_text(text_of(tracker))
+        if name:
+            facts["candidate_name"] = name
+    if requested_slot == "experience_years" and "experience_years" not in facts:
+        years = parse_years(text, entities(tracker, "experience_years"))
+        if years is not None:
+            facts["experience_years"] = years
+    if requested_slot == "english_level" and "english_level" not in facts:
+        english = normalize_english(text, (entities(tracker, "english_level") or [None])[0])
+        if english != "unknown":
+            facts["english_level"] = english
+    if requested_slot == "work_format" and "work_format" not in facts:
+        work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0])
+        if work_format != "unknown":
+            facts["work_format"] = work_format
     return facts
 
 
@@ -627,77 +864,101 @@ def score_candidate(slots: Dict[str, Any], tie_answer: Optional[str] = None) -> 
     tie_text = (tie_answer or "").lower()
     scores: Dict[str, float] = {}
     reasons: Dict[str, List[str]] = {}
+    breakdowns: Dict[str, Dict[str, float]] = {}
     for role, weights in ROLE_SKILL_WEIGHTS.items():
-        score = min(years * 6, 24)
+        breakdown = {
+            "experience": round(min(years, 5.0) / 5.0 * SCORING_WEIGHTS["experience"], 1),
+            "skills": 0.0,
+            "projects": 0.0,
+            "project_role": 0.0,
+            "target_role": 0.0,
+            "education": 0.0,
+            "english": 0.0,
+            "complexity": 0.0,
+            "tie_breaker": 0.0,
+        }
         role_reasons = []
         matched = []
+        raw_skill_score = 0.0
+        max_skill_score = sum(weights.get(skill, 0) for skill in ROLE_REQUIRED_SKILLS[role]) or 1
         for skill, weight in weights.items():
             if skill in skills:
-                score += weight
+                raw_skill_score += weight
                 matched.append(skill)
+        breakdown["skills"] = round(min(raw_skill_score / max_skill_score, 1.0) * SCORING_WEIGHTS["skills"], 1)
         if matched:
             role_reasons.append("релевантные навыки: " + ", ".join(matched[:5]))
         if role == target_role:
-            score += 8
+            breakdown["target_role"] = SCORING_WEIGHTS["target_role"]
             role_reasons.append("кандидат целится в эту роль")
         if role == "project_manager" and project_role in {"manager", "lead"}:
-            score += 18
+            breakdown["project_role"] = SCORING_WEIGHTS["project_role"]
             role_reasons.append("есть управленческая роль в проектах")
         if role == "data_analyst" and ("analytics" in projects or project_role == "analyst"):
-            score += 18
+            breakdown["project_role"] = SCORING_WEIGHTS["project_role"]
             role_reasons.append("есть аналитические проекты или роль аналитика")
         if role == "data_engineer" and ("etl" in projects or "dwh" in skills):
-            score += 20
+            breakdown["project_role"] = SCORING_WEIGHTS["project_role"]
             role_reasons.append("есть опыт data pipelines или DWH")
         if role == "data_scientist" and "ml_model" in projects:
-            score += 20
+            breakdown["project_role"] = SCORING_WEIGHTS["project_role"]
             role_reasons.append("есть опыт ML-моделей")
         if role == "mlops_engineer" and "production_ml" in projects:
-            score += 20
+            breakdown["project_role"] = SCORING_WEIGHTS["project_role"]
             role_reasons.append("есть production/MLOps опыт")
+        if ROLE_PROJECT_SIGNALS[role] & projects:
+            breakdown["projects"] = SCORING_WEIGHTS["projects"]
+        elif projects and "no_relevant_projects" not in projects:
+            breakdown["projects"] = round(SCORING_WEIGHTS["projects"] * 0.45, 1)
         if complexity == "high":
-            score += 8
+            breakdown["complexity"] = SCORING_WEIGHTS["complexity"]
             role_reasons.append("проекты высокой сложности")
         elif complexity == "medium":
-            score += 4
+            breakdown["complexity"] = round(SCORING_WEIGHTS["complexity"] * 0.5, 1)
         elif complexity == "low":
-            score -= 6
+            breakdown["complexity"] = -2.0
         if "technical" in education_fields and role in {"data_engineer", "data_scientist", "mlops_engineer"}:
-            score += 5
+            breakdown["education"] = max(breakdown["education"], SCORING_WEIGHTS["education"])
         if "data" in education_fields and role in {"data_analyst", "data_scientist"}:
-            score += 5
+            breakdown["education"] = max(breakdown["education"], SCORING_WEIGHTS["education"])
+        if "business" in education_fields and role == "project_manager":
+            breakdown["education"] = max(breakdown["education"], SCORING_WEIGHTS["education"])
         if english in {"b2", "c1", "c2"}:
-            score += 4
+            breakdown["english"] = SCORING_WEIGHTS["english"]
+        elif english == "b1":
+            breakdown["english"] = round(SCORING_WEIGHTS["english"] * 0.5, 1)
         elif english in {"none", "a1"}:
-            score -= 4
+            breakdown["english"] = -3.0
         if tie_text:
             tie_boosts = {
                 "project_manager": ["управ", "команд", "коммуникац", "stakeholder"],
                 "data_analyst": ["bi", "аналит", "метрик", "дашборд", "гипотез"],
                 "data_engineer": ["пайплайн", "pipeline", "etl", "данных", "инженер"],
-                "data_scientist": ["ml", "модель", "исслед", "эксперимент"],
-                "mlops_engineer": ["production", "инфраструкт", "эксплуатац", "деплой", "kubernetes"],
+                "data_scientist": ["ml", "мл", "эмель", "модель", "исслед", "эксперимент"],
+                "mlops_engineer": ["production", "инфраструкт", "эксплуатац", "деплой", "kubernetes", "кубер"],
             }
             if any(word in tie_text for word in tie_boosts[role]):
-                score += 10
+                breakdown["tie_breaker"] = SCORING_WEIGHTS["tie_breaker"]
                 role_reasons.append("tie-breaker ответ усилил роль")
+        score = sum(breakdown.values())
         scores[role] = max(0, min(round(score, 1), 100))
+        breakdowns[role] = breakdown
         reasons[role] = role_reasons or ["профиль частично пересекается с ролью"]
     ranking = sorted(
-        [{"role": role, "label": ROLE_LABELS[role], "score": score, "reasons": reasons[role]} for role, score in scores.items()],
+        [{"role": role, "label": ROLE_LABELS[role], "score": score, "reasons": reasons[role], "score_breakdown": breakdowns[role]} for role, score in scores.items()],
         key=lambda item: item["score"],
         reverse=True,
     )
     top = ranking[0]
     second = ranking[1]
-    if top["score"] >= 65:
+    if top["score"] >= 70:
         decision = "fit"
-    elif top["score"] >= 45:
+    elif top["score"] >= 50:
         decision = "borderline"
     else:
         decision = "reject"
     tie_question = None
-    if top["score"] >= 45 and abs(top["score"] - second["score"]) <= 7 and not tie_answer:
+    if top["score"] >= 50 and abs(top["score"] - second["score"]) <= 7 and not tie_answer:
         tie_question = make_tie_question(top["role"], second["role"])
     risks = make_risks(slots, top["role"], top["score"])
     return {
@@ -731,7 +992,7 @@ def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[s
     availability = slots.get("availability") or "unknown"
     target_role = slots.get("target_role") or "unknown"
     complexity = slots.get("project_complexity") or "unknown"
-    if top_score < 45:
+    if top_score < 50:
         risks.append("низкое соответствие всем пяти ролям")
     if years < 1:
         risks.append("мало релевантного опыта")
@@ -745,14 +1006,7 @@ def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[s
         risks.append("кандидат доступен не скоро")
     if complexity == "low":
         risks.append("нет признаков проектов промышленной сложности")
-    required = {
-        "project_manager": {"stakeholders", "scrum", "jira"},
-        "data_analyst": {"sql", "statistics"},
-        "data_engineer": {"airflow", "etl"},
-        "data_scientist": {"python", "ml"},
-        "mlops_engineer": {"docker", "kubernetes", "ci_cd"},
-    }
-    missing = sorted(required[top_role] - skills)
+    missing = sorted(ROLE_REQUIRED_SKILLS[top_role] - skills)[:3]
     if missing:
         risks.append("не хватает ключевых сигналов роли: " + ", ".join(missing))
     return risks or ["критичных рисков не обнаружено"]
@@ -760,6 +1014,7 @@ def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[s
 
 def build_candidate_summary(slots: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return {
+        "candidate_name": slots.get("candidate_name"),
         "target_role": ROLE_LABELS.get(slots.get("target_role") or "unknown"),
         "recommended_role": ROLE_LABELS.get(result["recommended_role"]),
         "decision_status": result["decision_status"],
@@ -808,6 +1063,7 @@ def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
     summary = report["candidate_summary"]
     row = {
         "created_at": report["created_at"],
+        "candidate_name": summary.get("candidate_name"),
         "recommended_role": report["recommended_role"],
         "decision_status": report["decision_status"],
         "top_score": report["role_ranking"][0]["score"],
@@ -876,11 +1132,12 @@ def human_follow_up_questions(result: Dict[str, Any]) -> List[str]:
     return questions[:3]
 
 
-def final_message(result: Dict[str, Any]) -> str:
+def final_message(result: Dict[str, Any], slots: Dict[str, Any]) -> str:
     recommended = ROLE_LABELS[result["recommended_role"]]
     alternatives = [item["label"] for item in result["ranking"][1:3]]
     reasons = human_reasons(result)
-    questions = human_follow_up_questions(result)
+    name = slots.get("candidate_name")
+    greeting = f"{name}, спасибо, интервью завершено." if name else "Спасибо, интервью завершено."
     if result["decision_status"] == "fit":
         status = f"По вашим ответам лучше всего подходит направление {recommended}."
         next_step_text = "Следующий шаг: передать профиль на техническое интервью."
@@ -891,7 +1148,7 @@ def final_message(result: Dict[str, Any]) -> str:
         status = f"По текущим ответам сильного совпадения с открытыми ролями пока не видно. Ближайшее направление: {recommended}."
         next_step_text = "Следующий шаг: рекрутер сможет вернуться к профилю, если появится более подходящая вакансия."
     parts = [
-        "Спасибо, интервью завершено.",
+        greeting,
         "",
         "Итог:",
         f"- {status}",
@@ -900,9 +1157,6 @@ def final_message(result: Dict[str, Any]) -> str:
         "Почему:",
     ]
     parts.extend(f"- {reason}." for reason in reasons)
-    if questions:
-        parts.extend(["", "Уточняющие вопросы:"])
-        parts.extend(f"- {question}" for question in questions)
     parts.extend(["", next_step_text])
     return "\n".join(parts)
 
@@ -910,7 +1164,7 @@ def final_message(result: Dict[str, Any]) -> str:
 def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str, Any], result: Dict[str, Any]) -> List[SlotSet]:
     report = build_recruiter_report(slots, result)
     json_path, csv_path = export_report(tracker.sender_id, report)
-    dispatcher.utter_message(text=final_message(result))
+    dispatcher.utter_message(text=final_message(result, slots))
     return [
         SlotSet("candidate_summary", report["candidate_summary"]),
         SlotSet("recruiter_report", report),
@@ -919,22 +1173,56 @@ def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str
         SlotSet("decision_status", result["decision_status"]),
         SlotSet("recommended_role", result["recommended_role"]),
         SlotSet("tie_breaker_question", None),
+        SlotSet("follow_up_questions", []),
         SlotSet("export_path_json", json_path),
         SlotSet("export_path_csv", csv_path),
     ]
+
+
+class ActionContextualFallback(Action):
+    def name(self) -> Text:
+        return "action_contextual_fallback"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        facts = slot_facts_from_text(tracker)
+        requested_slot = tracker.get_slot("requested_slot")
+        events: List[SlotSet] = []
+        for slot_name, value in facts.items():
+            events.append(SlotSet(slot_name, value))
+        if events:
+            return events
+        dispatcher.utter_message(text=contextual_prompt(requested_slot))
+        return []
 
 
 class ValidateInterviewForm(FormValidationAction):
     def name(self) -> Text:
         return "validate_interview_form"
 
+    async def extract_candidate_name(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if tracker.get_slot("requested_slot") != "candidate_name":
+            return {}
+        facts = extract_facts(tracker)
+        name = extract_name_from_text(text_of(tracker))
+        if name:
+            facts["candidate_name"] = name
+        return facts
+
+    def validate_candidate_name(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        name = normalize_candidate_name(str(slot_value or ""))
+        if len(name.split()) < 2 or len(name) < 5:
+            dispatcher.utter_message(text="Напишите, пожалуйста, фамилию и имя, чтобы рекрутер видел, чей это отклик.")
+            return {"candidate_name": None}
+        return {"candidate_name": name}
+
     async def extract_target_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        text = lower_text(tracker)
         if tracker.get_slot("requested_slot") != "target_role" and not entities(tracker, "target_role"):
             role = infer_role(lower_text(tracker))
             return {"target_role": role} if role != "unknown" else {}
         facts = extract_facts(tracker)
-        if not facts.get("target_role"):
-            facts["target_role"] = tracker.get_slot("target_role") or "unknown"
+        if not facts.get("target_role") and any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
+            facts["target_role"] = "unknown"
         return facts
 
     async def extract_experience_years(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
@@ -1019,12 +1307,18 @@ class ValidateInterviewForm(FormValidationAction):
         return extract_facts(tracker)
 
     def validate_target_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
-        return {"target_role": slot_value or "unknown"}
+        text = lower_text(tracker)
+        if not slot_value or slot_value == "unknown":
+            if any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
+                return {"target_role": "unknown"}
+            dispatcher.utter_message(text=contextual_prompt("target_role"))
+            return {"target_role": None}
+        return {"target_role": slot_value}
 
     def validate_experience_years(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             if not is_out_of_scope_text(lower_text(tracker)):
-                dispatcher.utter_message(text="Укажите опыт числом лет, например: 3 года. Если релевантного опыта нет, можно так и написать.")
+                dispatcher.utter_message(text="Сейчас нужен именно срок практики. Напишите число лет или месяцев, например: 3, 1.5 или 6 месяцев. Если релевантного опыта нет, можно так и написать.")
             return {"experience_years": None}
         return {"experience_years": max(0.0, min(float(slot_value), 50.0))}
 
@@ -1053,9 +1347,15 @@ class ValidateInterviewForm(FormValidationAction):
         return {"education_text": slot_value or "unknown"}
 
     def validate_english_level(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if slot_value is None:
+            dispatcher.utter_message(text=contextual_prompt("english_level"))
+            return {"english_level": None}
         return {"english_level": slot_value or "unknown"}
 
     def validate_work_format(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if slot_value is None:
+            dispatcher.utter_message(text=contextual_prompt("work_format"))
+            return {"work_format": None}
         return {"work_format": slot_value or "unknown"}
 
     def validate_salary_expectation_min(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
@@ -1065,6 +1365,9 @@ class ValidateInterviewForm(FormValidationAction):
         return {"salary_expectation_min": float(slot_value)}
 
     def validate_availability(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        if slot_value is None:
+            dispatcher.utter_message(text=contextual_prompt("availability"))
+            return {"availability": None}
         return {"availability": slot_value or "unknown"}
 
 
@@ -1076,13 +1379,23 @@ class ActionRankCandidate(Action):
         slots = tracker.current_slot_values()
         result = score_candidate(slots)
         if result["tie_breaker_question"]:
-            dispatcher.utter_message(text=f"Хочу уточнить, чтобы точнее сопоставить ваш опыт с вакансией. {result['tie_breaker_question']}")
+            dispatcher.utter_message(text=f"Хочу точнее понять ваш профиль. {result['tie_breaker_question']}")
             return [
                 SlotSet("role_ranking", result["ranking"]),
                 SlotSet("risk_flags", result["risk_flags"]),
                 SlotSet("decision_status", result["decision_status"]),
                 SlotSet("recommended_role", result["recommended_role"]),
                 SlotSet("tie_breaker_question", result["tie_breaker_question"]),
+            ]
+        follow_ups = human_follow_up_questions(result)
+        if follow_ups:
+            dispatcher.utter_message(text="Подскажите еще: " + " ".join(follow_ups))
+            return [
+                SlotSet("role_ranking", result["ranking"]),
+                SlotSet("risk_flags", result["risk_flags"]),
+                SlotSet("decision_status", result["decision_status"]),
+                SlotSet("recommended_role", result["recommended_role"]),
+                SlotSet("follow_up_questions", follow_ups),
             ]
         return finalize(dispatcher, tracker, slots, result)
 
@@ -1100,6 +1413,57 @@ class ActionApplyTieBreaker(Action):
         result = score_candidate(slots, answer)
         events = finalize(dispatcher, tracker, slots, result)
         events.append(SlotSet("tie_breaker_answer", answer))
+        return events
+
+
+class ActionApplyFollowUp(Action):
+    def name(self) -> Text:
+        return "action_apply_follow_up"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        if not tracker.get_slot("follow_up_questions"):
+            dispatcher.utter_message(text="Сейчас нет открытого уточнения. Можем продолжить интервью.")
+            return []
+        text = lower_text(tracker)
+        slots = tracker.current_slot_values()
+        updated_slots = dict(slots)
+        skills = infer_skills(text, entities(tracker, "skill"), allow_free_text=False)
+        projects = infer_projects(text, entities(tracker, "project_type")) if has_project_context(text) else []
+        salary_min, salary_max = parse_salary(text, entities(tracker, "salary_amount"))
+        english = normalize_english(text, (entities(tracker, "english_level") or [None])[0])
+        work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0])
+        availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0])
+        if skills:
+            updated_slots["skills"] = unique((slots.get("skills") or []) + skills)
+        if projects:
+            updated_slots["project_types"] = unique((slots.get("project_types") or []) + projects)
+            updated_slots["project_complexity"] = infer_complexity(text)
+        if salary_min is not None:
+            updated_slots["salary_expectation_min"] = salary_min
+            updated_slots["salary_expectation_max"] = salary_max
+        if english != "unknown":
+            updated_slots["english_level"] = english
+        if work_format != "unknown":
+            updated_slots["work_format"] = work_format
+        if availability != "unknown":
+            updated_slots["availability"] = availability
+        result = score_candidate(updated_slots)
+        events = finalize(dispatcher, tracker, updated_slots, result)
+        events.append(SlotSet("follow_up_answer", text_of(tracker)))
+        if skills:
+            events.append(SlotSet("skills", updated_slots["skills"]))
+        if projects:
+            events.append(SlotSet("project_types", updated_slots["project_types"]))
+            events.append(SlotSet("project_complexity", updated_slots["project_complexity"]))
+        if salary_min is not None:
+            events.append(SlotSet("salary_expectation_min", salary_min))
+            events.append(SlotSet("salary_expectation_max", salary_max))
+        if english != "unknown":
+            events.append(SlotSet("english_level", english))
+        if work_format != "unknown":
+            events.append(SlotSet("work_format", work_format))
+        if availability != "unknown":
+            events.append(SlotSet("availability", availability))
         return events
 
 
@@ -1194,7 +1558,11 @@ class ActionShowNextStep(Action):
         report = tracker.get_slot("recruiter_report")
         tie_question = tracker.get_slot("tie_breaker_question")
         if tie_question:
-            dispatcher.utter_message(text="Сначала ответьте на уточняющий вопрос: " + tie_question)
+            dispatcher.utter_message(text=tie_question)
+            return []
+        follow_ups = tracker.get_slot("follow_up_questions") or []
+        if follow_ups:
+            dispatcher.utter_message(text="Ответьте, пожалуйста: " + " ".join(follow_ups))
             return []
         if not report:
             dispatcher.utter_message(text="Сначала нужно пройти короткое интервью.")
