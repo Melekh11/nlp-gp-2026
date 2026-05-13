@@ -1,6 +1,5 @@
 .env
 .rasa/
-models/
 exports/
 __pycache__/
 *.pyc
