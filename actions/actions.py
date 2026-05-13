@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Text, Tuple
 
@@ -90,6 +90,14 @@ ROLE_ALIASES = {
     "мл инженер": "data_scientist",
     "эмельщик": "data_scientist",
     "эмель инженер": "data_scientist",
+    "млщик": "data_scientist",
+    "мльщик": "data_scientist",
+    "млшник": "data_scientist",
+    "mlшник": "data_scientist",
+    "мл специалист": "data_scientist",
+    "специалист по мл": "data_scientist",
+    "инженер машинного обучения": "data_scientist",
+    "machine learning": "data_scientist",
     "mlops": "mlops_engineer",
     "mlops engineer": "mlops_engineer",
     "mlops_engineer": "mlops_engineer",
@@ -100,6 +108,9 @@ ROLE_ALIASES = {
     "эмэлопс": "mlops_engineer",
     "эмельопс": "mlops_engineer",
     "мл ops": "mlops_engineer",
+    "мл опс": "mlops_engineer",
+    "ml ops": "mlops_engineer",
+    "эмель опс": "mlops_engineer",
 }
 
 SKILL_ALIASES = {
@@ -132,9 +143,15 @@ SKILL_ALIASES = {
     "ml": "ml",
     "мл": "ml",
     "мл ": "ml",
+    "млщик": "ml",
+    "мльщик": "ml",
+    "млшник": "ml",
+    "mlшник": "ml",
     "эмель": "ml",
     "эмел": "ml",
     "машинка": "ml",
+    "машинное": "ml",
+    "машинке": "ml",
     "модели": "ml",
     "airflow": "airflow",
     "эйрфлоу": "airflow",
@@ -483,6 +500,59 @@ def parse_number(value: Any) -> Optional[float]:
     return number
 
 
+NUMBER_WORDS = {
+    "один": 1,
+    "одну": 1,
+    "два": 2,
+    "две": 2,
+    "три": 3,
+    "четыре": 4,
+    "пять": 5,
+    "шесть": 6,
+    "семь": 7,
+    "восемь": 8,
+    "девять": 9,
+    "десять": 10,
+    "пару": 2,
+    "полтора": 1.5,
+}
+
+
+MONTHS_RU = {
+    "январ": 1,
+    "феврал": 2,
+    "март": 3,
+    "апрел": 4,
+    "май": 5,
+    "мае": 5,
+    "мая": 5,
+    "июн": 6,
+    "июл": 7,
+    "август": 8,
+    "сентябр": 9,
+    "октябр": 10,
+    "ноябр": 11,
+    "декабр": 12,
+}
+
+
+def text_number(text: str) -> Optional[float]:
+    match = re.search(r"\d+([\.,]\d+)?", text)
+    if match:
+        return float(match.group(0).replace(",", "."))
+    for word, number in NUMBER_WORDS.items():
+        if word in text:
+            return float(number)
+    return None
+
+
+def salary_amount(number: float, raw: str) -> float:
+    lowered = raw.lower()
+    if number < 1000 or any(unit in lowered for unit in ["к", "k", "тыс", "тысяч"]):
+        return number * 1000
+    return number
+
+
 def parse_years(text: str, values: List[Any]) -> Optional[float]:
     for value in values:
         number = parse_number(value)
@@ -542,9 +612,25 @@ def extract_name_from_text(text: str) -> Optional[str]:
 
 
 def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optional[float]]:
-    has_signal = bool(values) or any(word in text for word in ["зарплат", "ожидан", "руб", "тыс", "оклад", "доход"]) or bool(re.search(r"\d+([\.,]\d+)?\s*(к|k)\b", text))
+    has_signal = bool(values) or any(word in text for word in ["зарплат", "ожидан", "руб", "тыс", "оклад", "доход", "деньг", "вилка"]) or bool(re.search(r"\d+([\.,]\d+)?\s*(к|k)\b", text)) or bool(re.search(r"\d+([\.,]\d+)?\s*(\+|>)", text))
     if not has_signal:
         return None, None
+    lower_bound_patterns = [
+        r"(?:от|не меньше|минимум|нижн\w*|начиная с)\s*(\d+([\.,]\d+)?)\s*(к|k|тыс|тысяч|руб|рублей)?",
+        r"(\d+([\.,]\d+)?)\s*\+\s*(к|k|тыс|тысяч|руб|рублей)?",
+        r"(\d+([\.,]\d+)?)\s*(к|k|тыс|тысяч)?\s*\+",
+        r"(\d+([\.,]\d+)?)\s*(к|k|тыс|тысяч)?\s*>",
+        r"(\d+([\.,]\d+)?)\s*(к|k|тыс|тысяч)?\s*(?:и выше|плюс)",
+    ]
+    for pattern in lower_bound_patterns:
+        match = re.search(pattern, text)
+        if match:
+            raw = match.group(0)
+            number = parse_number(raw)
+            if number is not None:
+                if number < 1000:
+                    number = salary_amount(number, raw)
+                return number, None
     numbers = []
     for value in values:
         number = parse_number(value)
@@ -557,7 +643,7 @@ def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optiona
             number = parse_number(match.group(0))
             if number is not None:
                 if number < 1000:
-                    number *= 1000
+                    number = salary_amount(number, match.group(0))
                 numbers.append(number)
     if not numbers:
         return None, None
@@ -663,8 +749,15 @@ def infer_complexity(text: str) -> str:
 
 def normalize_english(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
+    compact = raw.replace(" ", "").replace("-", "")
+    level_match = re.search(r"(?<!\w)([abcавс])\s*([12])(?!\w)", raw, flags=re.IGNORECASE)
+    if level_match:
+        letter = level_match.group(1).lower()
+        number = level_match.group(2)
+        letter_map = {"a": "a", "а": "a", "b": "b", "в": "b", "c": "c", "с": "c"}
+        return f"{letter_map[letter]}{number}"
     for level in ["c2", "c1", "b2", "b1", "a2", "a1"]:
-        if level in raw:
+        if level in compact:
             return level
     clean = re.sub(r"[^\wа-яА-Я]+", " ", raw).strip()
     if clean in {"да", "ага", "угу", "вполне", "норм", "нормально", "спокойно"}:
@@ -673,37 +766,81 @@ def normalize_english(text: str, value: Any = None) -> str:
         return "none"
     if any(word in raw for word in ["нет", "никак", "не знаю", "незнаю", "не использую", "не читаю"]):
         return "none"
-    if any(word in raw for word in ["свобод", "advanced", "fluent", "отлично"]):
+    if any(word in raw for word in ["свобод", "advanced", "fluent", "отлично", "почти носитель", "near native"]):
         return "c1"
-    if any(word in raw for word in ["upper intermediate", "upper", "выше среднего", "уверенный", "очень хорошо", "без проблем", "легко читаю", "хорошо говорю"]):
+    if any(word in raw for word in ["upper intermediate", "upper", "выше среднего", "уверенный", "уверенно", "очень хорошо", "очень хороший", "без проблем", "легко читаю", "хорошо говорю", "сильный", "крепкий"]):
         return "b2"
-    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально", "вполне", "спокойно", "хорошо", "читаю", "переписываюсь"]):
+    if any(word in raw for word in ["документац", "доку", "док", "intermediate", "средний", "разговорный", "нормально", "вполне", "спокойно", "хорошо", "хороший", "приличный", "читаю", "переписываюсь"]):
         return "b1"
-    if any(word in raw for word in ["со словарем", "базовый", "начальный", "плохо", "слабо"]):
+    if any(word in raw for word in ["со словарем", "базовый", "начальный", "elementary", "pre intermediate", "плохо", "плохой", "слабо", "слабый"]):
         return "a2"
     return "unknown"
 
 
 def normalize_work_format(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
-    if any(word in raw for word in ["remote", "удален", "дистан"]):
-        return "remote"
-    if any(word in raw for word in ["hybrid", "гибрид"]):
-        return "hybrid"
-    if any(word in raw for word in ["office", "офис", "очно"]):
-        return "office"
-    if any(word in raw for word in ["любой", "без разницы", "any"]):
+    no_preference = ["любой", "без разницы", "any", "все равно", "всё равно", "не важно", "неважно", "как удобно", "как скажете", "любой вариант", "формат не принципиален", "не принципиально"]
+    if any(phrase in raw for phrase in no_preference):
         return "any"
+    remote_signal = any(word in raw for word in ["remote", "удален", "дистан", "из дома", "онлайн"])
+    office_signal = any(word in raw for word in ["office", "офис", "очно", "офлайн"])
+    hybrid_signal = any(word in raw for word in ["hybrid", "гибрид", "пару дней в офисе", "частично"])
+    if sum([remote_signal, office_signal, hybrid_signal]) >= 2:
+        return "any"
+    if remote_signal:
+        return "remote"
+    if hybrid_signal:
+        return "hybrid"
+    if office_signal:
+        return "office"
     return "unknown"
+
+
+def month_from_text(text: str) -> Optional[int]:
+    for key, number in MONTHS_RU.items():
+        if key in text:
+            return number
+    return None
+
+
+def months_until(month: int, today: Optional[date] = None) -> int:
+    current = today or date.today()
+    year = current.year
+    if month < current.month:
+        year += 1
+    return (year - current.year) * 12 + month - current.month
+
+
+def availability_by_month_delta(delta: int) -> str:
+    if delta <= 0:
+        return "available_now"
+    if delta <= 2:
+        return "available_soon"
+    return "available_not_soon"
 
 
 def normalize_availability(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
-    if any(word in raw for word in ["сразу", "сейчас", "now", "немедленно", "хоть завтра", "завтра"]):
+    if any(word in raw for word in ["сразу", "сейчас", "now", "немедленно", "хоть завтра", "завтра", "в ближайшие дни", "на днях"]):
         return "available_now"
-    if any(word in raw for word in ["три месяца", "3 месяца", "не раньше", "не готов", "позже"]):
+    if any(word in raw for word in ["полгода", "пол года", "через год", "не готов", "пока не ищу"]):
         return "available_not_soon"
-    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты", "отработки", "следующем", "после майских", "три недели"]):
+    relative_month_match = re.search(r"через\s+([а-яё\d\.,]+)\s*(месяц|месяца|месяцев)", raw)
+    if relative_month_match:
+        number = text_number(relative_month_match.group(1))
+        if number is not None:
+            return "available_soon" if number <= 2 else "available_not_soon"
+    relative_week_match = re.search(r"через\s+([а-яё\d\.,]+)\s*(недел|недели|недель)", raw)
+    if relative_week_match:
+        number = text_number(relative_week_match.group(1))
+        if number is not None:
+            return "available_soon" if number <= 8 else "available_not_soon"
+    month = month_from_text(raw)
+    if month:
+        return availability_by_month_delta(months_until(month))
+    if any(word in raw for word in ["квартал", "три месяца", "3 месяца", "не раньше", "позже"]):
+        return "available_not_soon"
+    if any(word in raw for word in ["недел", "месяц", "скоро", "отрабаты", "отработки", "следующем", "после майских", "три недели", "две недели", "пару недель"]):
         return "available_soon"
     return "unknown"
 
@@ -783,15 +920,15 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0]) if requested_slot == "project_role" or any(word in text for word in ["лид", "менедж", "разработ", "аналит", "управлял", "управляла"]) else "unknown"
     if project_role != "unknown":
         facts["project_role"] = project_role
-    english_signal = requested_slot == "english_level" or entities(tracker, "english_level") or "англий" in text or "english" in text or bool(re.search(r"\b[abc][12]\b", text))
+    english_signal = requested_slot == "english_level" or entities(tracker, "english_level") or "англий" in text or "english" in text or bool(re.search(r"\b[abcавс]\s*[12]\b", text))
     english = normalize_english(text, (entities(tracker, "english_level") or [None])[0]) if english_signal else "unknown"
     if english != "unknown":
         facts["english_level"] = english
-    work_signal = requested_slot == "work_format" or entities(tracker, "work_format") or any(word in text for word in ["удален", "remote", "офис", "гибрид", "очно", "дистан"])
+    work_signal = requested_slot == "work_format" or entities(tracker, "work_format") or any(word in text for word in ["удален", "remote", "офис", "гибрид", "очно", "дистан", "без разницы", "все равно", "всё равно", "не важно", "неважно"])
     work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0]) if work_signal else "unknown"
     if work_format != "unknown":
         facts["work_format"] = work_format
-    availability_signal = requested_slot == "availability" or entities(tracker, "availability") or any(word in text for word in ["готов выйти", "готова выйти", "выйти", "приступить", "отработка"])
+    availability_signal = requested_slot == "availability" or entities(tracker, "availability") or any(word in text for word in ["готов выйти", "готова выйти", "выйти", "приступить", "приступать", "отработка", "старт", "начать работу", "доступен", "доступна"])
     availability = normalize_availability(text, (entities(tracker, "availability") or [None])[0]) if availability_signal else "unknown"
     if availability != "unknown":
         facts["availability"] = availability
@@ -939,7 +1076,7 @@ def score_candidate(slots: Dict[str, Any], tie_answer: Optional[str] = None) -> 
             }
             if any(word in tie_text for word in tie_boosts[role]):
                 breakdown["tie_breaker"] = SCORING_WEIGHTS["tie_breaker"]
-                role_reasons.append("tie-breaker ответ усилил роль")
+                role_reasons.append("вы дополнительно уточнили профессиональный фокус")
         score = sum(breakdown.values())
         scores[role] = max(0, min(round(score, 1), 100))
         breakdowns[role] = breakdown
@@ -973,14 +1110,14 @@ def score_candidate(slots: Dict[str, Any], tie_answer: Optional[str] = None) -> 
 def make_tie_question(first: str, second: str) -> str:
     pair = {first, second}
     if pair == {"data_engineer", "mlops_engineer"}:
-        return "Уточнение: вам ближе строить data pipelines или отвечать за production-инфраструктуру и эксплуатацию моделей?"
+        return "Вам ближе строить data pipelines или отвечать за production-инфраструктуру и эксплуатацию моделей?"
     if pair == {"data_analyst", "data_scientist"}:
-        return "Уточнение: вам ближе BI, метрики и гипотезы или обучение и улучшение ML-моделей?"
+        return "Вам ближе BI, метрики и гипотезы или обучение и улучшение ML-моделей?"
     if pair == {"data_scientist", "mlops_engineer"}:
-        return "Уточнение: вам ближе исследовать модели или выводить их в production и мониторить?"
+        return "Вам ближе исследовать модели или выводить их в production и мониторить?"
     if pair == {"project_manager", "data_analyst"}:
-        return "Уточнение: вам ближе управлять командой и сроками или самостоятельно анализировать данные и метрики?"
-    return f"Уточнение: что вам ближе — {ROLE_LABELS[first]} или {ROLE_LABELS[second]}?"
+        return "Вам ближе управлять командой и сроками или самостоятельно анализировать данные и метрики?"
+    return f"Что вам ближе: {ROLE_LABELS[first]} или {ROLE_LABELS[second]}?"
 
 
 def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[str]:
@@ -1379,7 +1516,7 @@ class ActionRankCandidate(Action):
         slots = tracker.current_slot_values()
         result = score_candidate(slots)
         if result["tie_breaker_question"]:
-            dispatcher.utter_message(text=f"Хочу точнее понять ваш профиль. {result['tie_breaker_question']}")
+            dispatcher.utter_message(text=f"Уточню еще один момент. {result['tie_breaker_question']}")
             return [
                 SlotSet("role_ranking", result["ranking"]),
                 SlotSet("risk_flags", result["risk_flags"]),
@@ -1389,7 +1526,7 @@ class ActionRankCandidate(Action):
             ]
         follow_ups = human_follow_up_questions(result)
         if follow_ups:
-            dispatcher.utter_message(text="Подскажите еще: " + " ".join(follow_ups))
+            dispatcher.utter_message(text=f"Подскажите еще один момент. {follow_ups[0]}")
             return [
                 SlotSet("role_ranking", result["ranking"]),
                 SlotSet("risk_flags", result["risk_flags"]),
@@ -1406,7 +1543,7 @@ class ActionApplyTieBreaker(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if not tracker.get_slot("tie_breaker_question"):
-            dispatcher.utter_message(text="Сейчас нет активного уточняющего вопроса. Можем продолжить интервью.")
+            dispatcher.utter_message(text="Уточняющих вопросов у меня нет. Можем продолжить интервью.")
             return []
         slots = tracker.current_slot_values()
         answer = text_of(tracker)
@@ -1422,7 +1559,7 @@ class ActionApplyFollowUp(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if not tracker.get_slot("follow_up_questions"):
-            dispatcher.utter_message(text="Сейчас нет открытого уточнения. Можем продолжить интервью.")
+            dispatcher.utter_message(text="Уточняющих вопросов у меня нет. Можем продолжить интервью.")
             return []
         text = lower_text(tracker)
         slots = tracker.current_slot_values()
@@ -1448,7 +1585,19 @@ class ActionApplyFollowUp(Action):
         if availability != "unknown":
             updated_slots["availability"] = availability
         result = score_candidate(updated_slots)
-        events = finalize(dispatcher, tracker, updated_slots, result)
+        pending_all = tracker.get_slot("follow_up_questions") or []
+        pending = pending_all[1:]
+        if pending:
+            dispatcher.utter_message(text=f"Еще один момент. {pending[0]}")
+            events = [
+                SlotSet("role_ranking", result["ranking"]),
+                SlotSet("risk_flags", result["risk_flags"]),
+                SlotSet("decision_status", result["decision_status"]),
+                SlotSet("recommended_role", result["recommended_role"]),
+                SlotSet("follow_up_questions", pending),
+            ]
+        else:
+            events = finalize(dispatcher, tracker, updated_slots, result)
         events.append(SlotSet("follow_up_answer", text_of(tracker)))
         if skills:
             events.append(SlotSet("skills", updated_slots["skills"]))
@@ -1562,7 +1711,7 @@ class ActionShowNextStep(Action):
             return []
         follow_ups = tracker.get_slot("follow_up_questions") or []
         if follow_ups:
-            dispatcher.utter_message(text="Ответьте, пожалуйста: " + " ".join(follow_ups))
+            dispatcher.utter_message(text=follow_ups[0])
             return []
         if not report:
             dispatcher.utter_message(text="Сначала нужно пройти короткое интервью.")

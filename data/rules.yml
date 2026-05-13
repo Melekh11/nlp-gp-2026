@@ -221,6 +221,70 @@ rules:
     - intent: provide_multiple_fields
     - action: action_apply_follow_up
 
+- rule: Answer pending follow up with affirm
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: affirm
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with deny
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: deny
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with availability
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_availability
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with salary
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_salary
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with english
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_english
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with work format
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: provide_work_format
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with fallback text
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: nlu_fallback
+    - action: action_apply_follow_up
+
+- rule: Answer pending follow up with out of scope text
+  condition:
+    - slot_was_set:
+        - follow_up_questions
+  steps:
+    - intent: out_of_scope
+    - action: action_apply_follow_up
+
 - rule: Ask roles
   steps:
     - intent: ask_roles
