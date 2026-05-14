@@ -1406,14 +1406,15 @@ class ValidateInterviewForm(FormValidationAction):
 
     async def extract_target_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         text = lower_text(tracker)
-        if tracker.get_slot("requested_slot") == "target_role" and has_role_ambiguity(text):
-            return {"target_role": None}
-        if tracker.get_slot("requested_slot") != "target_role" and not entities(tracker, "target_role"):
-            role = infer_role(lower_text(tracker))
-            return {"target_role": role} if role != "unknown" else {}
+        entities_role = entities(tracker, "target_role")
+        if entities_role:
+            return {"target_role": entities_role}
+        role = infer_role(text)
+        if role and role != "unknown":
+            return {"target_role": role}
+        if any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
+            return {"target_role": "unknown"}
         facts = extract_facts(tracker)
-        if not facts.get("target_role") and any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
-            facts["target_role"] = "unknown"
         return facts
 
     async def extract_experience_years(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:

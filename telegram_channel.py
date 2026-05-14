@@ -35,6 +35,17 @@ class FixedTelegramInput(TelegramInput):
             if self._is_button(update):
                 msg = update.callback_query.message
                 text = update.callback_query.data
+
+                await out_channel.edit_message_reply_markup(
+                    msg.chat.id,
+                    msg.message_id,
+                    reply_markup=None  # Убираем клавиатуру
+                )
+
+                await out_channel.send_text_message(
+                    msg.chat.id,
+                    f"Вы выбрали: {text}"
+                )
             elif self._is_edited_message(update):
                 msg = update.edited_message
                 text = update.edited_message.text
