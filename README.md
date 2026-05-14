@@ -390,6 +390,47 @@ http://localhost:5005/webhooks/rest/webhook
 
 Для публичного HTTPS URL удобно использовать `cloudflared`. Установить его можно через [официальную инструкцию Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) или пакетный менеджер.
 
+### Быстрый запуск одной командой на Windows
+
+После установки зависимостей, создания `credentials.yml`, обучения модели и установки `cloudflared` можно запустить весь Telegram-контур одной командой:
+
+```powershell
+cd "C:\path\to\nlp-gp-2026"
+.\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER'
+```
+
+Если не хочется менять Execution Policy, можно запустить так:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER'
+```
+
+Скрипт сам:
+
+- остановит старые процессы на портах `5005` и `5055`;
+- запустит action server;
+- запустит `cloudflared` на `http://127.0.0.1:5005`;
+- найдет публичную ссылку `https://...trycloudflare.com`;
+- запустит Rasa server с правильным `TELEGRAM_WEBHOOK_URL`;
+- установит Telegram webhook;
+- покажет итоговый webhook URL.
+
+Если `cloudflared` не добавлен в `PATH`, передайте путь явно:
+
+```powershell
+.\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER' -CloudflaredPath 'C:\tools\cloudflared\cloudflared.exe'
+```
+
+Логи запуска пишутся в `.runtime/`. После успешного запуска отправьте боту `/start` в Telegram.
+
+Если PowerShell не разрешает запуск `.ps1`:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+### Ручной запуск
+
 ### Windows PowerShell
 
 Терминал 1, action server:
@@ -406,7 +447,7 @@ $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
 Терминал 2, tunnel:
 
 ```powershell
-cloudflared tunnel --url http://localhost:5005
+cloudflared tunnel --url http://127.0.0.1:5005
 ```
 
 Скопируйте URL вида `https://name.trycloudflare.com`.
@@ -458,7 +499,7 @@ python -m rasa run actions --actions actions
 Терминал 2:
 
 ```bash
-cloudflared tunnel --url http://localhost:5005
+cloudflared tunnel --url http://127.0.0.1:5005
 ```
 
 Терминал 3:
@@ -489,6 +530,7 @@ curl "https://api.telegram.org/bot$TELEGRAM_TOKEN/getWebhookInfo"
 - `Cannot connect to host localhost:5055` - action server не запущен или запущен не на `5055`.
 - `ngrok` или `cloudflared` не распознан - установите tunnel-инструмент и перезапустите терминал, чтобы обновился `PATH`.
 - При новом запуске `cloudflared` меняет публичный URL. После этого нужно обновить `TELEGRAM_WEBHOOK_URL`, перезапустить Rasa server и заново вызвать `/set_webhook`.
+- Если в логах `cloudflared` есть `dial tcp [::1]:5005`, tunnel запущен через IPv6 localhost. Используйте `http://127.0.0.1:5005`.
 
 ## 13. Проверка качества
 

@@ -18,3 +18,4 @@ exports/
 *.out
 dialog_smoke_output.jsonl
 .rasa_tmp/
+.runtime/
