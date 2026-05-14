@@ -221,46 +221,155 @@ Rasa Server
 
 ## 9. Актуальная модель
 
-Актуальная обученная модель:
+Локально сейчас используется обученная модель:
 
 ```text
 models\20260514-142209-ambitious-head.tar.gz
 ```
 
-В рабочей папке оставлена только актуальная модель. Папка `models/` добавлена в `.gitignore`, поэтому новые локальные модели не попадают в Git автоматически.
+Папка `models/` добавлена в `.gitignore`, поэтому после чистого `git clone` модели может не быть. В таком случае обучите ее командой из раздела 10.4.
 
-## 10. Запуск локально
+## 10. Быстрый запуск после `git clone`
 
-Все команды выполняются из корня проекта.
+Все команды выполняются из корня проекта. Для Rasa используйте Python 3.10.
 
-### Windows PowerShell
+После клонирования в репозитории обычно нет локальных runtime-файлов: `.venv/`, `credentials.yml`, `models/`, `exports/`. Это нормально: они создаются на машине разработчика и не хранятся в Git.
+
+### 10.1. Установка зависимостей на Windows
 
 ```powershell
-cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+cd "C:\path\to\nlp-gp-2026"
+py -3.10 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
 
+Если PowerShell запрещает активацию venv:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+### 10.2. Установка зависимостей на macOS M-series
+
+Рекомендуемый вариант - отдельное окружение Python 3.10 через conda:
+
+```bash
+cd /path/to/nlp-gp-2026
+conda create -n rasa310 python=3.10 -y
+conda activate rasa310
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+Если зависимости Rasa конфликтуют на ARM, создайте x64-окружение через Rosetta:
+
+```bash
+CONDA_SUBDIR=osx-64 conda create -n rasa310_x64 python=3.10 -y
+conda activate rasa310_x64
+conda config --env --set subdir osx-64
+python -m pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+### 10.3. Создание `credentials.yml`
+
+Файл `credentials.yml` игнорируется Git, потому что для Telegram в нем используются локальные секреты. Создайте файл в корне проекта:
+
+```yaml
+rest:
+
+rasa:
+  url: "http://localhost:5002/api"
+
+telegram_channel.FixedTelegramInput:
+  access_token: "${TELEGRAM_TOKEN}"
+  verify: "BOT_USERNAME_WITHOUT_AT"
+  webhook_url: "${TELEGRAM_WEBHOOK_URL}"
+```
+
+`verify` - это username бота без `@`, например `nlu_rasabot`. Сам токен в файл не записывайте, он передается через переменную окружения `TELEGRAM_TOKEN`.
+
+### 10.4. Обучение модели
+
+Так как `models/` не хранится в Git, после свежего клона нужно обучить модель:
+
+Windows:
+
+```powershell
 $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
+.\.venv\Scripts\python.exe -m rasa data validate
+.\.venv\Scripts\python.exe -m rasa train --force
 ```
 
-В первом терминале запускается action server:
+macOS/Linux:
+
+```bash
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa data validate
+python -m rasa train --force
+```
+
+После обучения в папке `models/` появится файл вида `YYYYMMDD-HHMMSS-name.tar.gz`.
+
+## 11. Запуск локально без Telegram
+
+### Windows PowerShell
+
+Терминал 1, action server:
 
 ```powershell
+cd "C:\path\to\nlp-gp-2026"
+$env:TEMP='C:\rasa_tmp'
+$env:TMP='C:\rasa_tmp'
+$env:PYTHONIOENCODING='utf-8'
+$env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
 .\.venv\Scripts\python.exe -m rasa run actions --actions actions
 ```
 
-Во втором терминале запускается Rasa server:
+Терминал 2, Rasa server:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260514-142209-ambitious-head.tar.gz --cors "*"
+cd "C:\path\to\nlp-gp-2026"
+$env:TEMP='C:\rasa_tmp'
+$env:TMP='C:\rasa_tmp'
+$env:PYTHONIOENCODING='utf-8'
+$env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
+$MODEL=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
 ```
 
 Проверка:
 
 ```powershell
 Invoke-WebRequest -UseBasicParsing http://localhost:5055/health
-Invoke-WebRequest -UseBasicParsing http://localhost:5005/status
+Invoke-RestMethod http://localhost:5005/status
+```
+
+### macOS/Linux
+
+Терминал 1:
+
+```bash
+cd /path/to/nlp-gp-2026
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa run actions --actions actions
+```
+
+Терминал 2:
+
+```bash
+cd /path/to/nlp-gp-2026
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+MODEL="$(ls -t models/*.tar.gz | head -n 1)"
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
 ```
 
 REST endpoint для тестов:
@@ -269,102 +378,24 @@ REST endpoint для тестов:
 http://localhost:5005/webhooks/rest/webhook
 ```
 
-### macOS на M-series
+## 12. Запуск Telegram
 
-Рекомендуется запуск через Python 3.10. Если зависимости Rasa конфликтуют на ARM, используйте окружение x64 через Rosetta.
+Для Telegram нужны:
 
-```bash
-cd /path/to/nlp-gp-2026
+- Telegram Bot API token из BotFather;
+- публичный HTTPS URL для webhook;
+- action server на `5055`;
+- Rasa server на `5005`;
+- файл `credentials.yml` из раздела 10.3.
 
-conda create -n rasa310 python=3.10 -y
-conda activate rasa310
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-```
+Для публичного HTTPS URL удобно использовать `cloudflared`. Установить его можно через [официальную инструкцию Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) или пакетный менеджер.
 
-Если обычное ARM-окружение не ставится:
+### Windows PowerShell
 
-```bash
-CONDA_SUBDIR=osx-64 conda create -n rasa310_x64 python=3.10 -y
-conda activate rasa310_x64
-conda config --env --set subdir osx-64
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-```
-
-Action server:
-
-```bash
-export PYTHONIOENCODING=utf-8
-export SQLALCHEMY_SILENCE_UBER_WARNING=1
-python -m rasa run actions --actions actions
-```
-
-Rasa server:
-
-```bash
-export PYTHONIOENCODING=utf-8
-export SQLALCHEMY_SILENCE_UBER_WARNING=1
-python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260514-142209-ambitious-head.tar.gz --cors "*"
-```
-
-### Валидация и обучение
-
-Windows:
+Терминал 1, action server:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa data validate
-.\.venv\Scripts\python.exe -m rasa train --force
-```
-
-macOS/Linux:
-
-```bash
-python -m rasa data validate
-python -m rasa train --force
-```
-
-Ожидаемый успешный результат валидации:
-
-```text
-No story structure conflicts found.
-```
-
-### Rasa shell
-
-Для локального тестирования без Telegram:
-
-```powershell
-.\.venv\Scripts\python.exe -m rasa shell --model models\20260514-142209-ambitious-head.tar.gz
-```
-
-macOS/Linux:
-
-```bash
-python -m rasa shell --model models/20260514-142209-ambitious-head.tar.gz
-```
-
-## 11. Запуск Telegram
-
-Для Telegram нужны Telegram Bot API token, public HTTPS URL для webhook, запущенный action server на `5055` и Rasa server на `5005`.
-
-В `credentials.yml` должен быть кастомный канал:
-
-```yaml
-telegram_channel.FixedTelegramInput:
-  access_token: "${TELEGRAM_TOKEN}"
-  verify: "nlu_rasabot"
-  webhook_url: "${TELEGRAM_WEBHOOK_URL}"
-```
-
-Стандартный ключ `telegram:` использовать не нужно: он может падать на части версий `aiogram`.
-
-### Windows Telegram
-
-Терминал 1:
-
-```powershell
-cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+cd "C:\path\to\nlp-gp-2026"
 $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
@@ -372,67 +403,94 @@ $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
 .\.venv\Scripts\python.exe -m rasa run actions --actions actions
 ```
 
-Терминал 2:
+Терминал 2, tunnel:
 
 ```powershell
-C:\tmp\cloudflared.exe tunnel --url http://localhost:5005
+cloudflared tunnel --url http://localhost:5005
 ```
 
 Скопируйте URL вида `https://name.trycloudflare.com`.
 
-Терминал 3:
+Терминал 3, Rasa server:
 
 ```powershell
-cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+cd "C:\path\to\nlp-gp-2026"
 $env:TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
 $env:TELEGRAM_WEBHOOK_URL='https://name.trycloudflare.com/webhooks/telegram/webhook'
 $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260514-142209-ambitious-head.tar.gz --cors "*"
+$MODEL=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
 ```
 
-Терминал 4:
+Дождитесь строки `Rasa server is up and running`. На больших моделях загрузка может занимать несколько минут.
+
+Терминал 4, установка webhook:
 
 ```powershell
 $env:TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
 $publicUrl='https://name.trycloudflare.com'
-Invoke-RestMethod -Uri "https://api.telegram.org/bot$env:TELEGRAM_TOKEN/setWebhook" -Method Post -Body @{
-  url = "$publicUrl/webhooks/telegram/webhook"
-  drop_pending_updates = "true"
-}
+Invoke-RestMethod -Uri "$publicUrl/webhooks/telegram/set_webhook" -Method Post
 Invoke-RestMethod -Uri "https://api.telegram.org/bot$env:TELEGRAM_TOKEN/getWebhookInfo"
 ```
 
-### macOS Telegram
+В `getWebhookInfo` поле `url` должно быть равно:
+
+```text
+https://name.trycloudflare.com/webhooks/telegram/webhook
+```
+
+После этого откройте Telegram-бота и отправьте `/start`.
+
+### macOS/Linux
+
+Терминал 1:
+
+```bash
+cd /path/to/nlp-gp-2026
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa run actions --actions actions
+```
+
+Терминал 2:
 
 ```bash
 cloudflared tunnel --url http://localhost:5005
 ```
 
-В отдельном терминале:
+Терминал 3:
 
 ```bash
+cd /path/to/nlp-gp-2026
 export TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
 export TELEGRAM_WEBHOOK_URL='https://name.trycloudflare.com/webhooks/telegram/webhook'
 export PYTHONIOENCODING=utf-8
 export SQLALCHEMY_SILENCE_UBER_WARNING=1
-python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260514-142209-ambitious-head.tar.gz --cors "*"
+MODEL="$(ls -t models/*.tar.gz | head -n 1)"
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
 ```
 
-Установка webhook:
+Терминал 4:
 
 ```bash
 export TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
 PUBLIC_URL='https://name.trycloudflare.com'
-curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/setWebhook" \
-  -d "url=$PUBLIC_URL/webhooks/telegram/webhook" \
-  -d "drop_pending_updates=true"
+curl -X POST "$PUBLIC_URL/webhooks/telegram/set_webhook"
 curl "https://api.telegram.org/bot$TELEGRAM_TOKEN/getWebhookInfo"
 ```
 
-## 12. Проверка качества
+### Частые проблемы Telegram-запуска
+
+- `Token is invalid!` - проверьте, что `TELEGRAM_TOKEN` задан в том же терминале, где запускается Rasa server. В `credentials.yml` должен быть `access_token: "${TELEGRAM_TOKEN}"`, а не сам токен.
+- Бот не отвечает на `/start` - проверьте `getWebhookInfo`: поле `url` должно вести на текущий `trycloudflare.com` URL, а `last_error_message` должно быть пустым.
+- `Cannot connect to host localhost:5055` - action server не запущен или запущен не на `5055`.
+- `ngrok` или `cloudflared` не распознан - установите tunnel-инструмент и перезапустите терминал, чтобы обновился `PATH`.
+- При новом запуске `cloudflared` меняет публичный URL. После этого нужно обновить `TELEGRAM_WEBHOOK_URL`, перезапустить Rasa server и заново вызвать `/set_webhook`.
+
+## 13. Проверка качества
 
 ### Python compile
 
@@ -460,7 +518,7 @@ dialog_smoke_output.jsonl
 
 Файл игнорируется Git.
 
-## 13. Экспорт результатов
+## 14. Экспорт результатов
 
 После завершения интервью создаются:
 
@@ -483,19 +541,22 @@ exports/
 - risk flags;
 - next step.
 
-## 14. Runtime artifacts
+## 15. Runtime artifacts
 
 В Git не попадают:
 
 - `.venv/`
 - `.rasa/`
+- `credentials.yml`
 - `models/`
 - `exports/`
 - `*.log`
+- `*.err`
+- `*.out`
 - `dialog_smoke_output.jsonl`
 - `__pycache__/`
 
-## 15. Дорожная карта
+## 16. Дорожная карта
 
 Рекомендуемые следующие улучшения:
 
@@ -506,7 +567,7 @@ exports/
 - fuzzy matching для редких опечаток в названиях технологий;
 - recruiter-only страница с деталями score breakdown.
 
-## 16. Команда проекта
+## 17. Команда проекта
 
 - Тимофей Морозов
 - Дарья Осина

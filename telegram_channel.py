@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Any
 
 from aiogram.types import Update
@@ -10,6 +11,14 @@ from sanic import Blueprint, response
 
 
 class FixedTelegramInput(TelegramInput):
+    def __init__(self, access_token, verify, webhook_url, debug_mode=True):
+        super().__init__(
+            os.path.expandvars(access_token or ""),
+            os.path.expandvars(verify or ""),
+            os.path.expandvars(webhook_url or ""),
+            debug_mode,
+        )
+
     def blueprint(self, on_new_message):
         telegram_webhook = Blueprint("telegram_webhook", __name__)
 

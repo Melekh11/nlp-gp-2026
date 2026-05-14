@@ -15,5 +15,6 @@ credentials.yml
 exports/
 *.log
 *.err
+*.out
 dialog_smoke_output.jsonl
 .rasa_tmp/
