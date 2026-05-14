@@ -37,13 +37,19 @@ function Wait-HttpJson {
 
 function Wait-TunnelUrl {
     param(
-        [string]$LogPath,
+        [string[]]$LogPaths,
         [int]$TimeoutSeconds = 90
     )
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while ((Get-Date) -lt $deadline) {
-        if (Test-Path $LogPath) {
-            $content = Get-Content -Path $LogPath -Raw -ErrorAction SilentlyContinue
+        foreach ($logPath in $LogPaths) {
+            if (-not (Test-Path $logPath)) {
+                continue
+            }
+            $content = Get-Content -Path $logPath -Raw -ErrorAction SilentlyContinue
+            if ([string]::IsNullOrWhiteSpace($content)) {
+                continue
+            }
             $match = [regex]::Match($content, "https://[a-zA-Z0-9-]+\.trycloudflare\.com")
             if ($match.Success) {
                 return $match.Value
@@ -51,7 +57,13 @@ function Wait-TunnelUrl {
         }
         Start-Sleep -Seconds 2
     }
-    throw "Cloudflared URL was not found in $LogPath"
+    $tails = foreach ($logPath in $LogPaths) {
+        if (Test-Path $logPath) {
+            "----- $logPath -----"
+            Get-Content -Path $logPath -Tail 40 -ErrorAction SilentlyContinue
+        }
+    }
+    throw "Cloudflared URL was not found. Recent cloudflared logs:`n$($tails -join [Environment]::NewLine)"
 }
 
 Set-Location $ProjectRoot
@@ -80,7 +92,7 @@ if (-not $ModelPath) {
     if (-not $model) {
         throw "No model found in models/. Run: .\.venv\Scripts\python.exe -m rasa train --force"
     }
-    $ModelPath = $model.FullName
+    $ModelPath = Join-Path "models" $model.Name
 }
 
 if (-not (Test-Path (Join-Path $ProjectRoot "credentials.yml"))) {
@@ -95,9 +107,8 @@ $rasaOut = Join-Path $ProjectRoot ".runtime\rasa.out.log"
 $rasaErr = Join-Path $ProjectRoot ".runtime\rasa.err.log"
 $cloudOut = Join-Path $ProjectRoot ".runtime\cloudflared.out.log"
 $cloudErr = Join-Path $ProjectRoot ".runtime\cloudflared.err.log"
-$cloudLog = Join-Path $ProjectRoot ".runtime\cloudflared.log"
 
-Remove-Item -LiteralPath $actionOut, $actionErr, $rasaOut, $rasaErr, $cloudOut, $cloudErr, $cloudLog -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $actionOut, $actionErr, $rasaOut, $rasaErr, $cloudOut, $cloudErr -ErrorAction SilentlyContinue
 
 if (-not $KeepExisting) {
     Stop-PortProcess -Port 5005
@@ -124,13 +135,13 @@ Wait-HttpJson -Url "http://127.0.0.1:5055/health" -TimeoutSeconds 90 | Out-Null
 
 Write-Host "Starting cloudflared tunnel to http://127.0.0.1:5005 ..."
 Start-Process -FilePath $CloudflaredPath `
-    -ArgumentList @("tunnel", "--url", "http://127.0.0.1:5005", "--no-autoupdate", "--logfile", $cloudLog) `
+    -ArgumentList @("tunnel", "--url", "http://127.0.0.1:5005", "--no-autoupdate") `
     -WorkingDirectory $ProjectRoot `
     -WindowStyle Hidden `
     -RedirectStandardOutput $cloudOut `
     -RedirectStandardError $cloudErr
 
-$publicUrl = Wait-TunnelUrl -LogPath $cloudLog -TimeoutSeconds 120
+$publicUrl = Wait-TunnelUrl -LogPaths @($cloudOut, $cloudErr) -TimeoutSeconds 120
 $webhookUrl = "$publicUrl/webhooks/telegram/webhook"
 
 $env:TELEGRAM_TOKEN = $TelegramToken

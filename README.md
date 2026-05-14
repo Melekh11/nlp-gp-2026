@@ -340,8 +340,9 @@ $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
-$MODEL=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
+$MODEL_NAME=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).Name
+$MODEL_PATH="models\$MODEL_NAME"
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL_PATH" --cors "*"
 ```
 
 Проверка:
@@ -388,7 +389,45 @@ http://localhost:5005/webhooks/rest/webhook
 - Rasa server на `5005`;
 - файл `credentials.yml` из раздела 10.3.
 
-Для публичного HTTPS URL удобно использовать `cloudflared`. Установить его можно через [официальную инструкцию Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) или пакетный менеджер.
+Для публичного HTTPS URL используется `cloudflared`. Он нужен, потому что Telegram отправляет сообщения только на публичный HTTPS webhook, а локальный Rasa server работает на `127.0.0.1:5005`.
+
+### Установка и проверка cloudflared
+
+Windows:
+
+1. Скачайте `cloudflared.exe` с [официальной страницы Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/).
+2. Положите файл в постоянную папку, например:
+
+```text
+C:\tools\cloudflared\cloudflared.exe
+```
+
+3. Проверьте, что файл существует:
+
+```powershell
+Test-Path 'C:\tools\cloudflared\cloudflared.exe'
+```
+
+Если хотите запускать просто `cloudflared`, добавьте папку в `PATH` и откройте новый PowerShell:
+
+```powershell
+setx PATH "$env:PATH;C:\tools\cloudflared"
+```
+
+Проверка:
+
+```powershell
+cloudflared --version
+```
+
+Если `cloudflared --version` не работает, используйте запуск с явным путем через параметр `-CloudflaredPath`.
+
+macOS:
+
+```bash
+brew install cloudflare/cloudflare/cloudflared
+cloudflared --version
+```
 
 ### Быстрый запуск одной командой на Windows
 
@@ -399,7 +438,7 @@ cd "C:\path\to\nlp-gp-2026"
 .\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER'
 ```
 
-Если не хочется менять Execution Policy, можно запустить так:
+Если PowerShell не разрешает запуск `.ps1`, используйте:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER'
@@ -421,17 +460,35 @@ powershell -ExecutionPolicy Bypass -File .\scripts\start_telegram.ps1 -TelegramT
 .\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER' -CloudflaredPath 'C:\tools\cloudflared\cloudflared.exe'
 ```
 
-Логи запуска пишутся в `.runtime/`. После успешного запуска отправьте боту `/start` в Telegram.
-
-Если PowerShell не разрешает запуск `.ps1`:
+То же самое через `ExecutionPolicy Bypass`:
 
 ```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+powershell -ExecutionPolicy Bypass -File .\scripts\start_telegram.ps1 -TelegramToken 'TOKEN_FROM_BOTFATHER' -CloudflaredPath 'C:\tools\cloudflared\cloudflared.exe'
 ```
+
+Скрипт корректно работает с путями проекта, где есть пробелы или кириллица. Модель выбирается автоматически: берется самый новый `.tar.gz` из папки `models/`.
+
+Логи запуска пишутся в `.runtime/`:
+
+```text
+.runtime/actions.err.log
+.runtime/rasa.err.log
+.runtime/cloudflared.err.log
+```
+
+После успешного запуска в терминале появится:
+
+```text
+Telegram bot is running.
+Public URL: https://...trycloudflare.com
+Webhook URL: https://...trycloudflare.com/webhooks/telegram/webhook
+```
+
+После этого отправьте боту `/start` в Telegram.
 
 ### Ручной запуск
 
-### Windows PowerShell
+#### Windows PowerShell
 
 Терминал 1, action server:
 
@@ -462,8 +519,9 @@ $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
-$MODEL=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL" --cors "*"
+$MODEL_NAME=(Get-ChildItem .\models\*.tar.gz | Sort-Object LastWriteTime -Descending | Select-Object -First 1).Name
+$MODEL_PATH="models\$MODEL_NAME"
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model "$MODEL_PATH" --cors "*"
 ```
 
 Дождитесь строки `Rasa server is up and running`. На больших моделях загрузка может занимать несколько минут.
@@ -485,7 +543,7 @@ https://name.trycloudflare.com/webhooks/telegram/webhook
 
 После этого откройте Telegram-бота и отправьте `/start`.
 
-### macOS/Linux
+#### macOS/Linux
 
 Терминал 1:
 
@@ -525,12 +583,15 @@ curl "https://api.telegram.org/bot$TELEGRAM_TOKEN/getWebhookInfo"
 
 ### Частые проблемы Telegram-запуска
 
-- `Token is invalid!` - проверьте, что `TELEGRAM_TOKEN` задан в том же терминале, где запускается Rasa server. В `credentials.yml` должен быть `access_token: "${TELEGRAM_TOKEN}"`, а не сам токен.
+- `cloudflared was not found` - `cloudflared` не добавлен в `PATH`. Запустите скрипт с `-CloudflaredPath 'C:\tools\cloudflared\cloudflared.exe'`.
+- `Cloudflared URL was not found` - проверьте `.runtime/cloudflared.err.log`. Если там есть ссылка `https://...trycloudflare.com`, обновите скрипт до последней версии. Если ссылки нет, перезапустите команду или проверьте интернет/VPN.
+- `Token is invalid!` - передан неправильный или неполный токен. Нужен полный токен из BotFather вида `1234567890:AA...`.
 - Бот не отвечает на `/start` - проверьте `getWebhookInfo`: поле `url` должно вести на текущий `trycloudflare.com` URL, а `last_error_message` должно быть пустым.
 - `Cannot connect to host localhost:5055` - action server не запущен или запущен не на `5055`.
 - `ngrok` или `cloudflared` не распознан - установите tunnel-инструмент и перезапустите терминал, чтобы обновился `PATH`.
 - При новом запуске `cloudflared` меняет публичный URL. После этого нужно обновить `TELEGRAM_WEBHOOK_URL`, перезапустить Rasa server и заново вызвать `/set_webhook`.
 - Если в логах `cloudflared` есть `dial tcp [::1]:5005`, tunnel запущен через IPv6 localhost. Используйте `http://127.0.0.1:5005`.
+- Если скрипт пишет `Starting Rasa server...` и долго ничего не происходит, Rasa может грузить модель несколько минут. Если через 5-6 минут запуска нет, смотрите `.runtime/rasa.err.log`.
 
 ## 13. Проверка качества
 
