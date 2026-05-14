@@ -76,10 +76,21 @@ ROLE_ALIASES = {
     "инженер данных": "data_engineer",
     "инжинер данных": "data_engineer",
     "data scientist": "data_scientist",
+    "data science": "data_scientist",
+    "datascience": "data_scientist",
+    "data-science": "data_scientist",
     "datascientist": "data_scientist",
     "data_scientist": "data_scientist",
+    "data scientist role": "data_scientist",
+    "data science role": "data_scientist",
+    "ds role": "data_scientist",
     "ds": "data_scientist",
     "дс": "data_scientist",
+    "дата сайнс": "data_scientist",
+    "дата саенс": "data_scientist",
+    "датасаенс": "data_scientist",
+    "дата сцаенс": "data_scientist",
+    "дейта сайнс": "data_scientist",
     "дата сайнтист": "data_scientist",
     "дата сайентист": "data_scientist",
     "дата сайентиста": "data_scientist",
@@ -470,7 +481,29 @@ def normalize_role(value: Any) -> str:
     return ROLE_ALIASES.get(raw) or ROLE_ALIASES.get(normalized, "unknown")
 
 
+def role_candidates(text: str) -> List[str]:
+    matches = []
+    for alias, role in sorted(ROLE_ALIASES.items(), key=lambda item: len(item[0]), reverse=True):
+        if alias == "да":
+            continue
+        normalized_alias = alias.strip()
+        if len(normalized_alias) <= 3:
+            pattern = r"(?<![\wа-яА-Я])" + re.escape(normalized_alias) + r"(?![\wа-яА-Я])"
+            if re.search(pattern, text):
+                matches.append(role)
+            continue
+        if normalized_alias in text:
+            matches.append(role)
+    return unique(matches)
+
+
+def has_role_ambiguity(text: str) -> bool:
+    return len(role_candidates(text)) > 1 and any(token in text for token in [" или ", "между", "не знаю", "незнаю", "не определ", "наверное", "либо"])
+
+
 def infer_role(text: str) -> str:
+    if has_role_ambiguity(text):
+        return "unknown"
     for alias, role in sorted(ROLE_ALIASES.items(), key=lambda item: len(item[0]), reverse=True):
         if alias == "да":
             continue
@@ -591,6 +624,7 @@ def extract_name_from_text(text: str) -> Optional[str]:
     if not original:
         return None
     patterns = [
+        r"(?:резюме|кандидат|соискатель)\s*[:\-]\s*([А-ЯЁA-Zа-яёa-z]+(?:\s+[А-ЯЁA-Zа-яёa-z]+){1,2})",
         r"(?:фио|фамилия и имя|имя)\s*[:\-]\s*([А-ЯЁA-Zа-яёa-z]+(?:\s+[А-ЯЁA-Zа-яёa-z]+){1,2})",
         r"(?:меня зовут|я)\s+([А-ЯЁA-Zа-яёa-z]+(?:\s+[А-ЯЁA-Zа-яёa-z]+){1,2})",
     ]
@@ -612,6 +646,8 @@ def extract_name_from_text(text: str) -> Optional[str]:
 
 
 def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optional[float]]:
+    if is_open_salary_text(text):
+        return 0.0, None
     has_signal = bool(values) or any(word in text for word in ["зарплат", "ожидан", "руб", "тыс", "оклад", "доход", "деньг", "вилка"]) or bool(re.search(r"\d+([\.,]\d+)?\s*(к|k)\b", text)) or bool(re.search(r"\d+([\.,]\d+)?\s*(\+|>)", text))
     if not has_signal:
         return None, None
@@ -652,6 +688,10 @@ def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optiona
     return min(numbers), max(numbers)
 
 
+def is_open_salary_text(text: str) -> bool:
+    return any(phrase in text for phrase in ["по рынку", "рыночн", "обсуждаемо", "обсудим", "как договоримся", "по договоренности", "готов обсудить", "готова обсудить", "ваша вилка", "ваше предложение"])
+
+
 def infer_skills(text: str, explicit: List[Any], allow_free_text: bool = False) -> List[str]:
     values = [str(value).lower() for value in explicit]
     for alias, skill in SKILL_ALIASES.items():
@@ -687,11 +727,17 @@ def has_project_context(text: str) -> bool:
             "проект",
             "делал",
             "делала",
+            "деплоил",
+            "деплоила",
             "пилил",
             "строил",
+            "строила",
             "собирал",
+            "собирала",
             "обучал",
+            "обучала",
             "выкатывал",
+            "выкатывала",
             "вел ",
             "вела ",
             "занимался",
@@ -699,6 +745,9 @@ def has_project_context(text: str) -> bool:
             "production",
             "продакшн",
             "деплой",
+            "дашборд",
+            "витрин",
+            "etl",
             "инференс",
             "эмель",
             "мл",
@@ -707,7 +756,7 @@ def has_project_context(text: str) -> bool:
 
 
 def is_skip_like(text: str) -> bool:
-    return any(phrase in text for phrase in ["не знаю", "незнаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь"])
+    return any(phrase in text for phrase in ["не знаю", "незнаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь", "как договоримся", "по договоренности"])
 
 
 def is_out_of_scope_text(text: str) -> bool:
@@ -728,7 +777,7 @@ def infer_project_role(text: str, value: Any = None) -> str:
         return "analyst"
     if any(word in text for word in ["лид", "lead", "руковод", "тимлид"]):
         return "lead"
-    if any(word in text for word in ["разраб", "инженер", "код", "строил", "делал"]):
+    if any(word in text for word in ["разраб", "инженер", "код", "строил", "строила", "делал", "делала", "проектировал", "проектировала", "деплоил", "деплоила", "выкатывал", "выкатывала"]):
         return "developer"
     if any(phrase in text for phrase in ["никакая роль", "роли не было", "не было роли", "нет роли"]):
         return "unknown"
@@ -912,12 +961,13 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     if skills:
         current = tracker.get_slot("skills") or []
         facts["skills"] = unique(current + skills)
-    projects = infer_projects(text, entities(tracker, "project_type")) if requested_slot == "project_types" or has_project_context(text) else []
+    project_context = has_project_context(text) or any(phrase in text for phrase in ["проектов нет", "нет проектов", "без проектов", "не было проектов"])
+    projects = infer_projects(text, entities(tracker, "project_type")) if project_context or entities(tracker, "project_type") else []
     if projects:
         current_projects = tracker.get_slot("project_types") or []
         facts["project_types"] = unique(current_projects + projects)
         facts["project_complexity"] = infer_complexity(text)
-    project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0]) if requested_slot == "project_role" or any(word in text for word in ["лид", "менедж", "разработ", "аналит", "управлял", "управляла"]) else "unknown"
+    project_role = infer_project_role(text, (entities(tracker, "project_role") or [None])[0]) if requested_slot == "project_role" or any(word in text for word in ["лид", "менедж", "разработ", "аналит", "управлял", "управляла", "деплоил", "деплоила", "выкатывал", "выкатывала", "строил", "строила"]) else "unknown"
     if project_role != "unknown":
         facts["project_role"] = project_role
     english_signal = requested_slot == "english_level" or entities(tracker, "english_level") or "англий" in text or "english" in text or bool(re.search(r"\b[abcавс]\s*[12]\b", text))
@@ -986,6 +1036,8 @@ def slot_facts_from_text(tracker: Tracker) -> Dict[str, Any]:
         work_format = normalize_work_format(text, (entities(tracker, "work_format") or [None])[0])
         if work_format != "unknown":
             facts["work_format"] = work_format
+    if requested_slot == "availability" and "availability" not in facts and is_skip_like(text):
+        facts["availability"] = "unknown"
     return facts
 
 
@@ -1353,24 +1405,15 @@ class ValidateInterviewForm(FormValidationAction):
         return {"candidate_name": name}
 
     async def extract_target_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
-
         text = lower_text(tracker)
-    
-        # Сначала проверяем entities (если есть в тексте)
         entities_role = entities(tracker, "target_role")
         if entities_role:
             return {"target_role": entities_role}
-        
-        # Затем пробуем infer_role в любом случае (не только когда слот не запрошен)
         role = infer_role(text)
         if role and role != "unknown":
             return {"target_role": role}
-        
-        # Уже после — проверка на "не знаю" и подобное
         if any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
             return {"target_role": "unknown"}
-        
-        # Если ничего не найдено — возвращаем то, что есть в facts
         facts = extract_facts(tracker)
         return facts
 
@@ -1444,6 +1487,9 @@ class ValidateInterviewForm(FormValidationAction):
         return extract_facts(tracker)
 
     async def extract_salary_expectation_min(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
+        text = lower_text(tracker)
+        if tracker.get_slot("requested_slot") == "salary_expectation_min" and is_open_salary_text(text):
+            return {"salary_expectation_min": 0.0, "salary_expectation_max": None}
         if tracker.get_slot("requested_slot") != "salary_expectation_min" and not entities(tracker, "salary_amount"):
             return {}
         return extract_facts(tracker)
@@ -1457,6 +1503,9 @@ class ValidateInterviewForm(FormValidationAction):
 
     def validate_target_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         text = lower_text(tracker)
+        if has_role_ambiguity(text):
+            dispatcher.utter_message(text="Похоже, вам близки несколько направлений. Выберите одно для начала: Data Analyst, Data Scientist, Data Engineer, MLOps Engineer или Project Manager.")
+            return {"target_role": None}
         if not slot_value or slot_value == "unknown":
             if any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
                 return {"target_role": "unknown"}
@@ -1747,4 +1796,7 @@ class ActionShowRoleDetails(Action):
         if role == "unknown":
             role = infer_role(lower_text(tracker))
         dispatcher.utter_message(text=ROLE_DETAILS.get(role, "Уточните роль: Project Manager, Data Analyst, Data Engineer, Data Scientist или MLOps Engineer."))
+        requested_slot = tracker.get_slot("requested_slot")
+        if requested_slot:
+            return [SlotSet(requested_slot, None)]
         return []

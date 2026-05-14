@@ -195,7 +195,7 @@ Rasa Server
 │   ├── rules.yml
 │   └── stories.yml
 ├── models/
-│   └── 20260513-195901-convex-skyway.tar.gz
+│   └── 20260513-203627-giant-root.tar.gz
 ├── scripts/
 │   └── dialog_smoke.py
 ├── config.yml
@@ -224,68 +224,110 @@ Rasa Server
 Актуальная обученная модель:
 
 ```text
-models\20260513-195901-convex-skyway.tar.gz
+models\20260513-203627-giant-root.tar.gz
 ```
 
 В рабочей папке оставлена только актуальная модель. Папка `models/` добавлена в `.gitignore`, поэтому новые локальные модели не попадают в Git автоматически.
 
-## 10. Локальный запуск
+## 10. Запуск локально
 
-Команды выполняются из корня проекта.
+Все команды выполняются из корня проекта.
 
-### Подготовка переменных окружения
+### Windows PowerShell
 
 ```powershell
+cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+
 $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
 ```
 
-### Валидация данных
-
-```powershell
-.\.venv\Scripts\python.exe -m rasa data validate
-```
-
-Ожидаемый успешный результат:
-
-```text
-No story structure conflicts found.
-```
-
-### Обучение модели
-
-```powershell
-.\.venv\Scripts\python.exe -m rasa train --force
-```
-
-### Action server
-
-В первом терминале:
+В первом терминале запускается action server:
 
 ```powershell
 .\.venv\Scripts\python.exe -m rasa run actions --actions actions
 ```
 
-Action endpoint:
-
-```text
-http://localhost:5055/webhook
-```
-
-### Rasa server
-
-Во втором терминале:
+Во втором терминале запускается Rasa server:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260513-195901-convex-skyway.tar.gz
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260513-203627-giant-root.tar.gz --cors "*"
 ```
 
-REST endpoint:
+Проверка:
+
+```powershell
+Invoke-WebRequest -UseBasicParsing http://localhost:5055/health
+Invoke-WebRequest -UseBasicParsing http://localhost:5005/status
+```
+
+REST endpoint для тестов:
 
 ```text
 http://localhost:5005/webhooks/rest/webhook
+```
+
+### macOS на M-series
+
+Рекомендуется запуск через Python 3.10. Если зависимости Rasa конфликтуют на ARM, используйте окружение x64 через Rosetta.
+
+```bash
+cd /path/to/nlp-gp-2026
+
+conda create -n rasa310 python=3.10 -y
+conda activate rasa310
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+Если обычное ARM-окружение не ставится:
+
+```bash
+CONDA_SUBDIR=osx-64 conda create -n rasa310_x64 python=3.10 -y
+conda activate rasa310_x64
+conda config --env --set subdir osx-64
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+```
+
+Action server:
+
+```bash
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa run actions --actions actions
+```
+
+Rasa server:
+
+```bash
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260513-203627-giant-root.tar.gz --cors "*"
+```
+
+### Валидация и обучение
+
+Windows:
+
+```powershell
+.\.venv\Scripts\python.exe -m rasa data validate
+.\.venv\Scripts\python.exe -m rasa train --force
+```
+
+macOS/Linux:
+
+```bash
+python -m rasa data validate
+python -m rasa train --force
+```
+
+Ожидаемый успешный результат валидации:
+
+```text
+No story structure conflicts found.
 ```
 
 ### Rasa shell
@@ -293,50 +335,101 @@ http://localhost:5005/webhooks/rest/webhook
 Для локального тестирования без Telegram:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa shell --model models\20260513-195901-convex-skyway.tar.gz
+.\.venv\Scripts\python.exe -m rasa shell --model models\20260513-203627-giant-root.tar.gz
+```
+
+macOS/Linux:
+
+```bash
+python -m rasa shell --model models/20260513-203627-giant-root.tar.gz
 ```
 
 ## 11. Запуск Telegram
 
-Для Telegram нужны:
+Для Telegram нужны Telegram Bot API token, public HTTPS URL для webhook, запущенный action server на `5055` и Rasa server на `5005`.
 
-- Telegram Bot API token;
-- public HTTPS URL для webhook;
-- запущенный Rasa server на `5005`;
-- запущенный action server на `5055`;
-- credentials с `telegram_channel.FixedTelegramInput`.
+В `credentials.yml` должен быть кастомный канал:
 
-Webhook должен иметь формат:
-
-```text
-https://<public-url>/webhooks/telegram/webhook
+```yaml
+telegram_channel.FixedTelegramInput:
+  access_token: "${TELEGRAM_TOKEN}"
+  verify: "nlu_rasabot"
+  webhook_url: "${TELEGRAM_WEBHOOK_URL}"
 ```
 
-Для локальной разработки можно использовать Cloudflare Tunnel:
+Стандартный ключ `telegram:` использовать не нужно: он может падать на части версий `aiogram`.
+
+### Windows Telegram
+
+Терминал 1:
+
+```powershell
+cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+$env:TEMP='C:\rasa_tmp'
+$env:TMP='C:\rasa_tmp'
+$env:PYTHONIOENCODING='utf-8'
+$env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
+.\.venv\Scripts\python.exe -m rasa run actions --actions actions
+```
+
+Терминал 2:
 
 ```powershell
 C:\tmp\cloudflared.exe tunnel --url http://localhost:5005
 ```
 
-После получения public URL нужно установить Telegram webhook:
+Скопируйте URL вида `https://name.trycloudflare.com`.
+
+Терминал 3:
 
 ```powershell
-Invoke-RestMethod -Uri "https://api.telegram.org/bot<TOKEN>/setWebhook" -Method Post -Body @{
-  url = "https://<public-url>/webhooks/telegram/webhook"
+cd "C:\Users\rsink\OneDrive\Рабочий стол\NLP\ChatBotHR\nlp-gp-2026"
+$env:TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
+$env:TELEGRAM_WEBHOOK_URL='https://name.trycloudflare.com/webhooks/telegram/webhook'
+$env:TEMP='C:\rasa_tmp'
+$env:TMP='C:\rasa_tmp'
+$env:PYTHONIOENCODING='utf-8'
+$env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260513-203627-giant-root.tar.gz --cors "*"
+```
+
+Терминал 4:
+
+```powershell
+$env:TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
+$publicUrl='https://name.trycloudflare.com'
+Invoke-RestMethod -Uri "https://api.telegram.org/bot$env:TELEGRAM_TOKEN/setWebhook" -Method Post -Body @{
+  url = "$publicUrl/webhooks/telegram/webhook"
   drop_pending_updates = "true"
 }
+Invoke-RestMethod -Uri "https://api.telegram.org/bot$env:TELEGRAM_TOKEN/getWebhookInfo"
 ```
 
-Проверка:
+### macOS Telegram
 
-```powershell
-Invoke-RestMethod -Uri "https://api.telegram.org/bot<TOKEN>/getWebhookInfo"
+```bash
+cloudflared tunnel --url http://localhost:5005
 ```
 
-Ожидаемо:
+В отдельном терминале:
 
-```text
-pending_update_count = 0
+```bash
+export TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
+export TELEGRAM_WEBHOOK_URL='https://name.trycloudflare.com/webhooks/telegram/webhook'
+export PYTHONIOENCODING=utf-8
+export SQLALCHEMY_SILENCE_UBER_WARNING=1
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260513-203627-giant-root.tar.gz --cors "*"
+```
+
+Установка webhook:
+
+```bash
+export TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
+PUBLIC_URL='https://name.trycloudflare.com'
+curl -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/setWebhook" \
+  -d "url=$PUBLIC_URL/webhooks/telegram/webhook" \
+  -d "drop_pending_updates=true"
+curl "https://api.telegram.org/bot$TELEGRAM_TOKEN/getWebhookInfo"
 ```
 
 ## 12. Проверка качества

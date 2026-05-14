@@ -81,7 +81,13 @@ nlu:
     - хочу на [дата инженера](target_role)
     - хочу быть [инженером данных](target_role)
     - хочу откликнуться на [Data Scientist](target_role)
+    - хочу на [Data Science](target_role)
+    - хочу в [data science](target_role)
+    - интересен [data science](target_role)
+    - [data science](target_role)
     - хочу на [дата сайентиста](target_role)
+    - хочу в [дата сайнс](target_role)
+    - хочу в [датасаенс](target_role)
     - хочу в [DS](target_role)
     - хочу заниматься ML как [дата сайентист](target_role)
     - хочу быть [млщиком](target_role)
@@ -669,9 +675,21 @@ nlu:
   examples: |
     - Data Scientist
     - data scientist
+    - Data Science
+    - data science
+    - datascience
+    - data-science
     - datascientist
     - DS
     - ДС
+    - data scientist role
+    - data science role
+    - ds role
+    - дата сайнс
+    - дата саенс
+    - датасаенс
+    - дата сцаенс
+    - дейта сайнс
     - дата сайентист
     - дата сайентиста
     - дата сайнтист
@@ -883,8 +901,20 @@ nlu:
     - дата инжинер
     - инжинер данных
     - Data Scientist
+    - Data Science
+    - data science
+    - datascience
+    - data-science
     - DS
     - ДС
+    - data scientist role
+    - data science role
+    - ds role
+    - дата сайнс
+    - дата саенс
+    - датасаенс
+    - дата сцаенс
+    - дейта сайнс
     - дата сайентист
     - дата сайнтист
     - дата саентист
