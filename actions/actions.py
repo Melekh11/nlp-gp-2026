@@ -760,7 +760,7 @@ def is_skip_like(text: str) -> bool:
 
 
 def is_out_of_scope_text(text: str) -> bool:
-    return any(word in text for word in ["погода", "курс доллара", "новости", "анекдот", "сколько времени", "который час"])
+    return any(word in text for word in ["погода", "курс доллара", "новости", "анекдот", "сколько времени", "который час", "сайт", "игра", "игру", "лендинг", "приложение", "логотип", "презентац"])
 
 
 def is_role_skill_question(text: str) -> bool:

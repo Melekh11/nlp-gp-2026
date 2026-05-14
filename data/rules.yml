@@ -13,6 +13,15 @@ rules:
     - action: interview_form
     - active_loop: interview_form
 
+- rule: Start-like message during form
+  condition:
+    - active_loop: interview_form
+  steps:
+    - intent: start_interview
+    - action: action_contextual_fallback
+    - action: interview_form
+    - active_loop: interview_form
+
 - rule: Affirm starts interview
   steps:
     - intent: affirm

@@ -195,7 +195,7 @@ Rasa Server
 │   ├── rules.yml
 │   └── stories.yml
 ├── models/
-│   └── 20260513-203627-giant-root.tar.gz
+│   └── 20260514-142209-ambitious-head.tar.gz
 ├── scripts/
 │   └── dialog_smoke.py
 ├── config.yml
@@ -224,7 +224,7 @@ Rasa Server
 Актуальная обученная модель:
 
 ```text
-models\20260513-203627-giant-root.tar.gz
+models\20260514-142209-ambitious-head.tar.gz
 ```
 
 В рабочей папке оставлена только актуальная модель. Папка `models/` добавлена в `.gitignore`, поэтому новые локальные модели не попадают в Git автоматически.
@@ -253,7 +253,7 @@ $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
 Во втором терминале запускается Rasa server:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260513-203627-giant-root.tar.gz --cors "*"
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260514-142209-ambitious-head.tar.gz --cors "*"
 ```
 
 Проверка:
@@ -305,7 +305,7 @@ Rasa server:
 ```bash
 export PYTHONIOENCODING=utf-8
 export SQLALCHEMY_SILENCE_UBER_WARNING=1
-python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260513-203627-giant-root.tar.gz --cors "*"
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260514-142209-ambitious-head.tar.gz --cors "*"
 ```
 
 ### Валидация и обучение
@@ -335,13 +335,13 @@ No story structure conflicts found.
 Для локального тестирования без Telegram:
 
 ```powershell
-.\.venv\Scripts\python.exe -m rasa shell --model models\20260513-203627-giant-root.tar.gz
+.\.venv\Scripts\python.exe -m rasa shell --model models\20260514-142209-ambitious-head.tar.gz
 ```
 
 macOS/Linux:
 
 ```bash
-python -m rasa shell --model models/20260513-203627-giant-root.tar.gz
+python -m rasa shell --model models/20260514-142209-ambitious-head.tar.gz
 ```
 
 ## 11. Запуск Telegram
@@ -390,7 +390,7 @@ $env:TEMP='C:\rasa_tmp'
 $env:TMP='C:\rasa_tmp'
 $env:PYTHONIOENCODING='utf-8'
 $env:SQLALCHEMY_SILENCE_UBER_WARNING='1'
-.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260513-203627-giant-root.tar.gz --cors "*"
+.\.venv\Scripts\python.exe -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models\20260514-142209-ambitious-head.tar.gz --cors "*"
 ```
 
 Терминал 4:
@@ -418,7 +418,7 @@ export TELEGRAM_TOKEN='TOKEN_FROM_BOTFATHER'
 export TELEGRAM_WEBHOOK_URL='https://name.trycloudflare.com/webhooks/telegram/webhook'
 export PYTHONIOENCODING=utf-8
 export SQLALCHEMY_SILENCE_UBER_WARNING=1
-python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260513-203627-giant-root.tar.gz --cors "*"
+python -m rasa run --enable-api --credentials credentials.yml --endpoints endpoints.yml --model models/20260514-142209-ambitious-head.tar.gz --cors "*"
 ```
 
 Установка webhook:
