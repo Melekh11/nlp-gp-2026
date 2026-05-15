@@ -426,10 +426,12 @@ QUESTION_BY_SLOT = {
 }
 
 
+# достает последний текст пользователя
 def text_of(tracker: Tracker) -> str:
     return (tracker.latest_message.get("text") or "").strip()
 
 
+# исправляет частые опечатки
 def normalize_typos(text: str) -> str:
     replacements = {
         "учавств": "участв",
@@ -448,20 +450,24 @@ def normalize_typos(text: str) -> str:
     return result
 
 
+# приводит текст к нормальной форме
 def lower_text(tracker: Tracker) -> str:
     return normalize_typos(text_of(tracker).lower().replace("ё", "е"))
 
 
+# чистит имя кандидата
 def normalize_candidate_name(text: str) -> str:
     cleaned = re.sub(r"\s+", " ", text.strip())
     cleaned = re.sub(r"^(меня зовут|я|это)\s+", "", cleaned, flags=re.IGNORECASE)
     return cleaned[:120]
 
 
+# достает entity из сообщения
 def entities(tracker: Tracker, name: str) -> List[Any]:
     return [e.get("value") for e in tracker.latest_message.get("entities", []) if e.get("entity") == name]
 
 
+# убирает повторы
 def unique(values: List[Any]) -> List[Any]:
     result = []
     for value in values:
@@ -473,6 +479,7 @@ def unique(values: List[Any]) -> List[Any]:
     return result
 
 
+# нормализует роль
 def normalize_role(value: Any) -> str:
     if not value:
         return "unknown"
@@ -481,6 +488,7 @@ def normalize_role(value: Any) -> str:
     return ROLE_ALIASES.get(raw) or ROLE_ALIASES.get(normalized, "unknown")
 
 
+# находит роли в тексте
 def role_candidates(text: str) -> List[str]:
     matches = []
     for alias, role in sorted(ROLE_ALIASES.items(), key=lambda item: len(item[0]), reverse=True):
@@ -497,10 +505,12 @@ def role_candidates(text: str) -> List[str]:
     return unique(matches)
 
 
+# проверяет неоднозначность роли
 def has_role_ambiguity(text: str) -> bool:
     return len(role_candidates(text)) > 1 and any(token in text for token in [" или ", "между", "не знаю", "незнаю", "не определ", "наверное", "либо"])
 
 
+# определяет роль из текста
 def infer_role(text: str) -> str:
     if has_role_ambiguity(text):
         return "unknown"
@@ -520,6 +530,7 @@ def infer_role(text: str) -> str:
     return "unknown"
 
 
+# извлекает число
 def parse_number(value: Any) -> Optional[float]:
     if value is None:
         return None
@@ -569,6 +580,7 @@ MONTHS_RU = {
 }
 
 
+# понимает числа словами
 def text_number(text: str) -> Optional[float]:
     match = re.search(r"\d+([\.,]\d+)?", text)
     if match:
@@ -579,6 +591,7 @@ def text_number(text: str) -> Optional[float]:
     return None
 
 
+# переводит зарплату в рубли
 def salary_amount(number: float, raw: str) -> float:
     lowered = raw.lower()
     if number < 1000 or any(unit in lowered for unit in ["к", "k", "тыс", "тысяч"]):
@@ -586,6 +599,7 @@ def salary_amount(number: float, raw: str) -> float:
     return number
 
 
+# извлекает годы опыта
 def parse_years(text: str, values: List[Any]) -> Optional[float]:
     for value in values:
         number = parse_number(value)
@@ -619,6 +633,7 @@ def parse_years(text: str, values: List[Any]) -> Optional[float]:
     return None
 
 
+# извлекает фио из текста
 def extract_name_from_text(text: str) -> Optional[str]:
     original = re.sub(r"\s+", " ", text.strip())
     if not original:
@@ -645,6 +660,7 @@ def extract_name_from_text(text: str) -> Optional[str]:
     return None
 
 
+# извлекает зарплатную вилку
 def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optional[float]]:
     if is_open_salary_text(text):
         return 0.0, None
@@ -697,10 +713,12 @@ def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optiona
     return min(numbers), max(numbers)
 
 
+# проверяет открытую зарплату
 def is_open_salary_text(text: str) -> bool:
     return any(phrase in text for phrase in ["по рынку", "рыночн", "обсуждаемо", "обсудим", "как договоримся", "по договоренности", "готов обсудить", "готова обсудить", "ваша вилка", "ваше предложение"])
 
 
+# извлекает навыки
 def infer_skills(text: str, explicit: List[Any], allow_free_text: bool = False) -> List[str]:
     values = [str(value).lower() for value in explicit]
     for alias, skill in SKILL_ALIASES.items():
@@ -711,6 +729,7 @@ def infer_skills(text: str, explicit: List[Any], allow_free_text: bool = False) 
     return unique(values)
 
 
+# извлекает типы проектов
 def infer_projects(text: str, explicit: List[Any]) -> List[str]:
     values = [str(value).lower() for value in explicit]
     if any(phrase in text for phrase in ["проектов нет", "нет проектов", "без проектов", "не было проектов"]) or ("бариста" in text and "проект" not in text):
@@ -729,6 +748,7 @@ def infer_projects(text: str, explicit: List[Any]) -> List[str]:
     return unique(values)
 
 
+# проверяет контекст проекта
 def has_project_context(text: str) -> bool:
     return any(
         word in text
@@ -764,18 +784,22 @@ def has_project_context(text: str) -> bool:
     )
 
 
+# распознает пропуск ответа
 def is_skip_like(text: str) -> bool:
     return any(phrase in text for phrase in ["не знаю", "незнаю", "не уверен", "пропустим", "давай пропустим", "затрудняюсь", "как договоримся", "по договоренности"])
 
 
+# распознает нерелевантный текст
 def is_out_of_scope_text(text: str) -> bool:
     return any(word in text for word in ["погода", "курс доллара", "новости", "анекдот", "сколько времени", "который час", "сайт", "игра", "игру", "лендинг", "приложение", "логотип", "презентац"])
 
 
+# распознает вопрос о навыках роли
 def is_role_skill_question(text: str) -> bool:
     return text.endswith("?") and any(word in text for word in ["навык", "скилл", "уметь", "требован"]) and infer_role(text) != "unknown"
 
 
+# определяет роль в проекте
 def infer_project_role(text: str, value: Any = None) -> str:
     raw = str(value or "").lower()
     if raw in {"manager", "analyst", "developer", "lead"}:
@@ -793,6 +817,7 @@ def infer_project_role(text: str, value: Any = None) -> str:
     return "unknown"
 
 
+# оценивает сложность проекта
 def infer_complexity(text: str) -> str:
     high = ["production", "highload", "kubernetes", "spark", "kafka", "команда", "миллион", "мониторинг", "продакшн"]
     low = ["учебн", "pet", "простой", "курсов", "домашн"]
@@ -805,6 +830,7 @@ def infer_complexity(text: str) -> str:
     return "unknown"
 
 
+# нормализует английский
 def normalize_english(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
     compact = raw.replace(" ", "").replace("-", "")
@@ -835,6 +861,7 @@ def normalize_english(text: str, value: Any = None) -> str:
     return "unknown"
 
 
+# нормализует формат работы
 def normalize_work_format(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
     no_preference = ["любой", "без разницы", "any", "все равно", "всё равно", "не важно", "неважно", "как удобно", "как скажете", "любой вариант", "формат не принципиален", "не принципиально"]
@@ -854,6 +881,7 @@ def normalize_work_format(text: str, value: Any = None) -> str:
     return "unknown"
 
 
+# находит месяц в тексте
 def month_from_text(text: str) -> Optional[int]:
     for key, number in MONTHS_RU.items():
         if key in text:
@@ -861,6 +889,7 @@ def month_from_text(text: str) -> Optional[int]:
     return None
 
 
+# считает месяцы до даты
 def months_until(month: int, today: Optional[date] = None) -> int:
     current = today or date.today()
     year = current.year
@@ -869,6 +898,7 @@ def months_until(month: int, today: Optional[date] = None) -> int:
     return (year - current.year) * 12 + month - current.month
 
 
+# классифицирует срок выхода
 def availability_by_month_delta(delta: int) -> str:
     if delta <= 0:
         return "available_now"
@@ -877,6 +907,7 @@ def availability_by_month_delta(delta: int) -> str:
     return "available_not_soon"
 
 
+# нормализует доступность
 def normalize_availability(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
     if raw in {"available_now", "available_soon", "available_not_soon", "unknown"}:
@@ -905,6 +936,7 @@ def normalize_availability(text: str, value: Any = None) -> str:
     return "unknown"
 
 
+# извлекает образование
 def infer_education(text: str) -> Tuple[List[str], List[str]]:
     levels = []
     fields = []
@@ -925,6 +957,7 @@ def infer_education(text: str) -> Tuple[List[str], List[str]]:
     return unique(levels), unique(fields)
 
 
+# проверяет контекст образования
 def has_education_context(text: str) -> bool:
     return any(
         word in text
@@ -947,6 +980,7 @@ def has_education_context(text: str) -> bool:
     )
 
 
+# выделяет фрагмент про образование
 def education_snippet(original_text: str) -> str:
     parts = re.split(r"(?<=[.!?])\s+", original_text.strip())
     selected = [part.strip() for part in parts if has_education_context(part.lower().replace("ё", "е"))]
@@ -955,6 +989,7 @@ def education_snippet(original_text: str) -> str:
     return original_text.strip()[:500]
 
 
+# собирает факты из сообщения
 def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     text = lower_text(tracker)
     requested_slot = tracker.get_slot("requested_slot")
@@ -1010,6 +1045,7 @@ def extract_facts(tracker: Tracker) -> Dict[str, Any]:
     return facts
 
 
+# возвращает уточняющий вопрос
 def contextual_prompt(requested_slot: Optional[str]) -> str:
     prompts = {
         "candidate_name": "Напишите, пожалуйста, фамилию и имя.",
@@ -1027,6 +1063,7 @@ def contextual_prompt(requested_slot: Optional[str]) -> str:
     return prompts.get(requested_slot, "Уточните ответ, пожалуйста.")
 
 
+# достает факты для текущего слота
 def slot_facts_from_text(tracker: Tracker) -> Dict[str, Any]:
     text = lower_text(tracker)
     requested_slot = tracker.get_slot("requested_slot")
@@ -1052,6 +1089,7 @@ def slot_facts_from_text(tracker: Tracker) -> Dict[str, Any]:
     return facts
 
 
+# считает рейтинг ролей
 def score_candidate(slots: Dict[str, Any], tie_answer: Optional[str] = None) -> Dict[str, Any]:
     skills = set(slots.get("skills") or [])
     projects = set(slots.get("project_types") or [])
@@ -1170,6 +1208,7 @@ def score_candidate(slots: Dict[str, Any], tie_answer: Optional[str] = None) -> 
     }
 
 
+# делает tie breaker вопрос
 def make_tie_question(first: str, second: str) -> str:
     pair = {first, second}
     if pair == {"data_engineer", "mlops_engineer"}:
@@ -1183,6 +1222,7 @@ def make_tie_question(first: str, second: str) -> str:
     return f"Что вам ближе: {ROLE_LABELS[first]} или {ROLE_LABELS[second]}?"
 
 
+# определяет риски
 def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[str]:
     risks = []
     skills = set(slots.get("skills") or [])
@@ -1212,6 +1252,7 @@ def make_risks(slots: Dict[str, Any], top_role: str, top_score: float) -> List[s
     return risks or ["критичных рисков не обнаружено"]
 
 
+# собирает summary кандидата
 def build_candidate_summary(slots: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "candidate_name": slots.get("candidate_name"),
@@ -1232,6 +1273,7 @@ def build_candidate_summary(slots: Dict[str, Any], result: Dict[str, Any]) -> Di
     }
 
 
+# собирает отчет рекрутера
 def build_recruiter_report(slots: Dict[str, Any], result: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -1244,6 +1286,7 @@ def build_recruiter_report(slots: Dict[str, Any], result: Dict[str, Any]) -> Dic
     }
 
 
+# выбирает следующий шаг
 def next_step(decision: str) -> str:
     if decision == "fit":
         return "Передать на техническое интервью"
@@ -1252,6 +1295,7 @@ def next_step(decision: str) -> str:
     return "Отправить вежливый отказ с рекомендациями по развитию"
 
 
+# экспортирует отчет
 def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
     export_dir = Path.cwd() / "exports"
     export_dir.mkdir(exist_ok=True)
@@ -1281,6 +1325,7 @@ def export_report(sender_id: str, report: Dict[str, Any]) -> Tuple[str, str]:
     return str(json_path), str(csv_path)
 
 
+# делает причины понятными
 def human_reasons(result: Dict[str, Any]) -> List[str]:
     reasons = result["ranking"][0].get("reasons") or []
     cleaned = []
@@ -1307,6 +1352,7 @@ def human_reasons(result: Dict[str, Any]) -> List[str]:
     return cleaned[:3] or ["в ответах есть несколько релевантных сигналов для этой роли"]
 
 
+# делает уточняющие вопросы
 def human_follow_up_questions(result: Dict[str, Any]) -> List[str]:
     questions = []
     for risk in result.get("risk_flags") or []:
@@ -1332,6 +1378,7 @@ def human_follow_up_questions(result: Dict[str, Any]) -> List[str]:
     return questions[:3]
 
 
+# формирует финальный ответ
 def final_message(result: Dict[str, Any], slots: Dict[str, Any]) -> str:
     recommended = ROLE_LABELS[result["recommended_role"]]
     alternatives = [item["label"] for item in result["ranking"][1:3]]
@@ -1361,6 +1408,7 @@ def final_message(result: Dict[str, Any], slots: Dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
+# завершает интервью
 def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str, Any], result: Dict[str, Any]) -> List[SlotSet]:
     report = build_recruiter_report(slots, result)
     json_path, csv_path = export_report(tracker.sender_id, report)
@@ -1380,9 +1428,11 @@ def finalize(dispatcher: CollectingDispatcher, tracker: Tracker, slots: Dict[str
 
 
 class ActionContextualFallback(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_contextual_fallback"
 
+    # обрабатывает непонятый ответ
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         facts = slot_facts_from_text(tracker)
         requested_slot = tracker.get_slot("requested_slot")
@@ -1396,9 +1446,11 @@ class ActionContextualFallback(Action):
 
 
 class ValidateInterviewForm(FormValidationAction):
+    # возвращает имя валидатора
     def name(self) -> Text:
         return "validate_interview_form"
 
+    # извлекает фио
     async def extract_candidate_name(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "candidate_name":
             return {}
@@ -1408,6 +1460,7 @@ class ValidateInterviewForm(FormValidationAction):
             facts["candidate_name"] = name
         return facts
 
+    # проверяет фио
     def validate_candidate_name(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         name = normalize_candidate_name(str(slot_value or ""))
         if len(name.split()) < 2 or len(name) < 5:
@@ -1415,6 +1468,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"candidate_name": None}
         return {"candidate_name": name}
 
+    # извлекает целевую роль
     async def extract_target_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         text = lower_text(tracker)
         entities_role = entities(tracker, "target_role")
@@ -1428,6 +1482,7 @@ class ValidateInterviewForm(FormValidationAction):
         facts = extract_facts(tracker)
         return facts
 
+    # извлекает опыт
     async def extract_experience_years(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "experience_years" and not entities(tracker, "experience_years"):
             return {}
@@ -1439,6 +1494,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"experience_years": 0.0}
         return extract_facts(tracker)
 
+    # извлекает навыки
     async def extract_skills(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         latest_intent = (tracker.latest_message.get("intent") or {}).get("name")
         if tracker.get_slot("requested_slot") != "skills" and latest_intent not in {"provide_skills", "provide_multiple_fields"}:
@@ -1452,6 +1508,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"skills": ["not_specified"]}
         return extract_facts(tracker)
 
+    # извлекает проекты
     async def extract_project_types(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "project_types" and not entities(tracker, "project_type"):
             return {}
@@ -1462,6 +1519,7 @@ class ValidateInterviewForm(FormValidationAction):
             facts["project_role"] = "unknown"
         return facts
 
+    # извлекает роль в проекте
     async def extract_project_role(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "project_role" and not entities(tracker, "project_role"):
             return {}
@@ -1470,6 +1528,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"project_role": "unknown"}
         return extract_facts(tracker)
 
+    # извлекает образование
     async def extract_education_text(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "education_text":
             return extract_facts(tracker)
@@ -1479,6 +1538,7 @@ class ValidateInterviewForm(FormValidationAction):
         facts.update({"education_text": text, "education_level": levels, "education_field": fields})
         return facts
 
+    # извлекает английский
     async def extract_english_level(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "english_level" and not entities(tracker, "english_level"):
             return {}
@@ -1490,6 +1550,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"english_level": english}
         return extract_facts(tracker)
 
+    # извлекает формат работы
     async def extract_work_format(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "work_format" and not entities(tracker, "work_format"):
             return {}
@@ -1497,6 +1558,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"work_format": "unknown"}
         return extract_facts(tracker)
 
+    # извлекает зарплату
     async def extract_salary_expectation_min(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         text = lower_text(tracker)
         if tracker.get_slot("requested_slot") == "salary_expectation_min" and is_open_salary_text(text):
@@ -1505,6 +1567,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {}
         return extract_facts(tracker)
 
+    # извлекает срок выхода
     async def extract_availability(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if tracker.get_slot("requested_slot") != "availability" and not entities(tracker, "availability"):
             return {}
@@ -1512,6 +1575,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"availability": "unknown"}
         return extract_facts(tracker)
 
+    # проверяет роль
     def validate_target_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         text = lower_text(tracker)
         if has_role_ambiguity(text):
@@ -1526,6 +1590,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"target_role": None}
         return {"target_role": slot_value}
 
+    # проверяет опыт
     def validate_experience_years(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             if not is_out_of_scope_text(lower_text(tracker)):
@@ -1533,6 +1598,7 @@ class ValidateInterviewForm(FormValidationAction):
             return {"experience_years": None}
         return {"experience_years": max(0.0, min(float(slot_value), 50.0))}
 
+    # проверяет навыки
     def validate_skills(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if not slot_value:
             if not is_role_skill_question(lower_text(tracker)):
@@ -1540,12 +1606,14 @@ class ValidateInterviewForm(FormValidationAction):
             return {"skills": None}
         return {"skills": slot_value}
 
+    # проверяет проекты
     def validate_project_types(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if not slot_value:
             dispatcher.utter_message(text="Расскажите хотя бы об одном проекте или напишите, что проектов пока не было.")
             return {"project_types": None, "project_complexity": None}
         return {"project_types": slot_value}
 
+    # проверяет роль в проекте
     def validate_project_role(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if not slot_value or slot_value == "unknown":
             if "no_relevant_projects" in (tracker.get_slot("project_types") or []):
@@ -1554,27 +1622,32 @@ class ValidateInterviewForm(FormValidationAction):
             return {"project_role": None}
         return {"project_role": slot_value}
 
+    # проверяет образование
     def validate_education_text(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         return {"education_text": slot_value or "unknown"}
 
+    # проверяет английский
     def validate_english_level(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             dispatcher.utter_message(text=contextual_prompt("english_level"))
             return {"english_level": None}
         return {"english_level": slot_value or "unknown"}
 
+    # проверяет формат работы
     def validate_work_format(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             dispatcher.utter_message(text=contextual_prompt("work_format"))
             return {"work_format": None}
         return {"work_format": slot_value or "unknown"}
 
+    # проверяет зарплату
     def validate_salary_expectation_min(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             dispatcher.utter_message(text="Укажите зарплатные ожидания числом или диапазоном.")
             return {"salary_expectation_min": None}
         return {"salary_expectation_min": float(slot_value)}
 
+    # проверяет срок выхода
     def validate_availability(self, slot_value: Any, dispatcher: CollectingDispatcher, tracker: Tracker, domain: DomainDict) -> Dict[Text, Any]:
         if slot_value is None:
             dispatcher.utter_message(text=contextual_prompt("availability"))
@@ -1583,9 +1656,11 @@ class ValidateInterviewForm(FormValidationAction):
 
 
 class ActionRankCandidate(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_rank_candidate"
 
+    # запускает скоринг
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         slots = tracker.current_slot_values()
         result = score_candidate(slots)
@@ -1612,9 +1687,11 @@ class ActionRankCandidate(Action):
 
 
 class ActionApplyTieBreaker(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_apply_tie_breaker"
 
+    # применяет tie breaker
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if not tracker.get_slot("tie_breaker_question"):
             dispatcher.utter_message(text="Уточняющих вопросов у меня нет. Можем продолжить интервью.")
@@ -1628,9 +1705,11 @@ class ActionApplyTieBreaker(Action):
 
 
 class ActionApplyFollowUp(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_apply_follow_up"
 
+    # применяет уточнение
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         if not tracker.get_slot("follow_up_questions"):
             dispatcher.utter_message(text="Уточняющих вопросов у меня нет. Можем продолжить интервью.")
@@ -1691,9 +1770,11 @@ class ActionApplyFollowUp(Action):
 
 
 class ActionChangeAnswer(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_change_answer"
 
+    # изменяет сохраненный ответ
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         text = lower_text(tracker)
         events: List[SlotSet] = []
@@ -1742,9 +1823,11 @@ class ActionChangeAnswer(Action):
 
 
 class ActionRepeatQuestion(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_repeat_question"
 
+    # повторяет текущий вопрос
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         requested_slot = tracker.get_slot("requested_slot")
         question = QUESTION_BY_SLOT.get(requested_slot)
@@ -1756,9 +1839,11 @@ class ActionRepeatQuestion(Action):
 
 
 class ActionSkipQuestion(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_skip_question"
 
+    # пропускает текущий вопрос
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         requested_slot = tracker.get_slot("requested_slot")
         if not requested_slot:
@@ -1774,9 +1859,11 @@ class ActionSkipQuestion(Action):
 
 
 class ActionShowNextStep(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_show_next_step"
 
+    # показывает следующий шаг
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         report = tracker.get_slot("recruiter_report")
         tie_question = tracker.get_slot("tie_breaker_question")
@@ -1801,9 +1888,11 @@ class ActionShowNextStep(Action):
 
 
 class ActionShowRoleDetails(Action):
+    # возвращает имя action
     def name(self) -> Text:
         return "action_show_role_details"
 
+    # показывает детали роли
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         role = normalize_role((entities(tracker, "target_role") or [None])[0])
         if role == "unknown":
