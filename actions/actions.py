@@ -669,8 +669,17 @@ def parse_salary(text: str, values: List[Any]) -> Tuple[Optional[float], Optiona
                 return number, None
     numbers = []
     for value in values:
-        number = parse_number(value)
-        if number is not None:
+        raw_value = str(value)
+        value_numbers = []
+        for match in re.finditer(r"\d+([\.,]\d+)?\s*(к|k|тыс|тысяч|руб|рублей)?", raw_value.lower()):
+            number = parse_number(match.group(0))
+            if number is not None:
+                value_numbers.append(number)
+        if not value_numbers:
+            number = parse_number(value)
+            if number is not None:
+                value_numbers.append(number)
+        for number in value_numbers:
             if number < 1000:
                 number *= 1000
             numbers.append(number)
@@ -870,6 +879,8 @@ def availability_by_month_delta(delta: int) -> str:
 
 def normalize_availability(text: str, value: Any = None) -> str:
     raw = str(value or text).lower()
+    if raw in {"available_now", "available_soon", "available_not_soon", "unknown"}:
+        return raw
     if any(word in raw for word in ["сразу", "сейчас", "now", "немедленно", "хоть завтра", "завтра", "в ближайшие дни", "на днях"]):
         return "available_now"
     if any(word in raw for word in ["полгода", "пол года", "через год", "не готов", "пока не ищу"]):
@@ -1507,6 +1518,8 @@ class ValidateInterviewForm(FormValidationAction):
             dispatcher.utter_message(text="Похоже, вам близки несколько направлений. Выберите одно для начала: Data Analyst, Data Scientist, Data Engineer, MLOps Engineer или Project Manager.")
             return {"target_role": None}
         if not slot_value or slot_value == "unknown":
+            if "unknown" in [str(value).lower() for value in entities(tracker, "target_role")]:
+                return {"target_role": "unknown"}
             if any(token in text for token in ["не знаю", "подбери", "не определился", "любая", "любой"]):
                 return {"target_role": "unknown"}
             dispatcher.utter_message(text=contextual_prompt("target_role"))

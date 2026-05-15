@@ -281,78 +281,78 @@ responses:
   utter_ask_target_role:
     - text: "Окей, теперь по роли: какое направление вам ближе?"
       buttons:
-        - payload: "Менеджер проектов подходит!"
-          title: "Менеджер проектов"
-        - payload: "Аналитик данных подходит!"
-          title: "Аналитик данных"
-        - payload: "Инженер данных"
-          title: "Дата сайнтист"
-        - payload: "data_scientist" 
-          title: "Дата сайнтист"
-        - payload: "MLOps полходит"
-          title: "MLOps"
-        - payload: "Нет того, что мне нужно"
-          title: "Нет подходящего"
+        - title: "Project Manager"
+          payload: '/provide_multiple_fields{"target_role":"project_manager"}'
+        - title: "Data Analyst"
+          payload: '/provide_multiple_fields{"target_role":"data_analyst"}'
+        - title: "Data Engineer"
+          payload: '/provide_multiple_fields{"target_role":"data_engineer"}'
+        - title: "Data Scientist"
+          payload: '/provide_multiple_fields{"target_role":"data_scientist"}'
+        - title: "MLOps Engineer"
+          payload: '/provide_multiple_fields{"target_role":"mlops_engineer"}'
+        - title: "Другое"
+          payload: '/provide_multiple_fields{"target_role":"unknown"}'
       button_type: vertical
     - text: "На какое направление хотите откликнуться?"
       buttons:
-        - payload: "Менеджер проектов подходит!"
-          title: "Менеджер проектов"
-        - payload: "Аналитик данных подходит!"
-          title: "Аналитик данных"
-        - payload: "Инженер данных"
-          title: "Дата сайнтист"
-        - payload: "data_scientist" 
-          title: "Дата сайнтист"
-        - payload: "MLOps полходит"
-          title: "MLOps"
-        - payload: "Нет того, что мне нужно"
-          title: "Нет подходящего"
+        - title: "Project Manager"
+          payload: '/provide_multiple_fields{"target_role":"project_manager"}'
+        - title: "Data Analyst"
+          payload: '/provide_multiple_fields{"target_role":"data_analyst"}'
+        - title: "Data Engineer"
+          payload: '/provide_multiple_fields{"target_role":"data_engineer"}'
+        - title: "Data Scientist"
+          payload: '/provide_multiple_fields{"target_role":"data_scientist"}'
+        - title: "MLOps Engineer"
+          payload: '/provide_multiple_fields{"target_role":"mlops_engineer"}'
+        - title: "Другое"
+          payload: '/provide_multiple_fields{"target_role":"unknown"}'
       button_type: vertical
     - text: "Спасибо. На какую позицию вы хотите пройти собеседование?"
       buttons:
-        - payload: "Менеджер проектов подходит!"
-          title: "Менеджер проектов"
-        - payload: "Аналитик данных подходит!"
-          title: "Аналитик данных"
-        - payload: "Инженер данных"
-          title: "Дата сайнтист"
-        - payload: "data_scientist" 
-          title: "Дата сайнтист"
-        - payload: "MLOps полходит"
-          title: "MLOps"
-        - payload: "Нет того, что мне нужно"
-          title: "Нет подходящего"
+        - title: "Project Manager"
+          payload: '/provide_multiple_fields{"target_role":"project_manager"}'
+        - title: "Data Analyst"
+          payload: '/provide_multiple_fields{"target_role":"data_analyst"}'
+        - title: "Data Engineer"
+          payload: '/provide_multiple_fields{"target_role":"data_engineer"}'
+        - title: "Data Scientist"
+          payload: '/provide_multiple_fields{"target_role":"data_scientist"}'
+        - title: "MLOps Engineer"
+          payload: '/provide_multiple_fields{"target_role":"mlops_engineer"}'
+        - title: "Другое"
+          payload: '/provide_multiple_fields{"target_role":"unknown"}'
       button_type: vertical
     - text: "На какую позицию вы хотите пройти собеседование?"
       buttons:
-        - payload: "Менеджер проектов подходит!"
-          title: "Менеджер проектов"
-        - payload: "Аналитик данных подходит!"
-          title: "Аналитик данных"
-        - payload: "Инженер данных"
-          title: "Дата сайнтист"
-        - payload: "data_scientist" 
-          title: "Дата сайнтист"
-        - payload: "MLOps полходит"
-          title: "MLOps"
-        - payload: "Нет того, что мне нужно"
-          title: "Нет подходящего"
+        - title: "Project Manager"
+          payload: '/provide_multiple_fields{"target_role":"project_manager"}'
+        - title: "Data Analyst"
+          payload: '/provide_multiple_fields{"target_role":"data_analyst"}'
+        - title: "Data Engineer"
+          payload: '/provide_multiple_fields{"target_role":"data_engineer"}'
+        - title: "Data Scientist"
+          payload: '/provide_multiple_fields{"target_role":"data_scientist"}'
+        - title: "MLOps Engineer"
+          payload: '/provide_multiple_fields{"target_role":"mlops_engineer"}'
+        - title: "Другое"
+          payload: '/provide_multiple_fields{"target_role":"unknown"}'
       button_type: vertical
     - text: "Какая вакансия вам интересна?"
       buttons:
-        - payload: "Менеджер проектов подходит!"
-          title: "Менеджер проектов"
-        - payload: "Аналитик данных подходит!"
-          title: "Аналитик данных"
-        - payload: "Инженер данных"
-          title: "Data eng"
-        - payload: "data scientist" 
-          title: "DS"
-        - payload: "MLOps"
-          title: "MLOps"
-        - payload: "другое"
-          title: "Другое"
+        - title: "Project Manager"
+          payload: '/provide_multiple_fields{"target_role":"project_manager"}'
+        - title: "Data Analyst"
+          payload: '/provide_multiple_fields{"target_role":"data_analyst"}'
+        - title: "Data Engineer"
+          payload: '/provide_multiple_fields{"target_role":"data_engineer"}'
+        - title: "Data Scientist"
+          payload: '/provide_multiple_fields{"target_role":"data_scientist"}'
+        - title: "MLOps Engineer"
+          payload: '/provide_multiple_fields{"target_role":"mlops_engineer"}'
+        - title: "Другое"
+          payload: '/provide_multiple_fields{"target_role":"unknown"}'
       button_type: vertical
   utter_ask_candidate_name:
     - text: "Как вас зовут? Напишите, пожалуйста, фамилию и имя."
@@ -363,48 +363,48 @@ responses:
   utter_ask_experience_years:
     - text: "Сколько лет или месяцев релевантной практики можно учитывать? Можно ответить просто числом."
       buttons:
-        - payload: "3 месяца"
-          title: "3 месяца"
-        - payload: "1 год"
-          title: "1 год"
-        - payload: "3 года"
-          title: "3 года"
+        - title: "3 месяца"
+          payload: '/provide_exp{"experience_years":"0.25"}'
+        - title: "1 год"
+          payload: '/provide_exp{"experience_years":"1"}'
+        - title: "3 года"
+          payload: '/provide_exp{"experience_years":"3"}'
       button_type: vertical
     - text: "Теперь уточню длительность опыта: сколько лет вы занимались похожими задачами?"
       buttons:
-        - payload: "3 месяца"
-          title: "3 месяца"
-        - payload: "1 год"
-          title: "1 год"
-        - payload: "3 года"
-          title: "3 года"
+        - title: "3 месяца"
+          payload: '/provide_exp{"experience_years":"0.25"}'
+        - title: "1 год"
+          payload: '/provide_exp{"experience_years":"1"}'
+        - title: "3 года"
+          payload: '/provide_exp{"experience_years":"3"}'
       button_type: vertical
     - text: "Сориентируйте по сроку практики в этом направлении: например 3, 1.5 или 6 месяцев."
       buttons:
-        - payload: "3 месяца"
-          title: "3 месяца"
-        - payload: "1 год"
-          title: "1 год"
-        - payload: "3 года"
-          title: "3 года"
+        - title: "3 месяца"
+          payload: '/provide_exp{"experience_years":"0.25"}'
+        - title: "1 год"
+          payload: '/provide_exp{"experience_years":"1"}'
+        - title: "3 года"
+          payload: '/provide_exp{"experience_years":"3"}'
       button_type: vertical
     - text: "Окей, теперь именно про длительность опыта: сколько лет или месяцев можно считать релевантными?"
       buttons:
-        - payload: "3 месяца"
-          title: "3 месяца"
-        - payload: "1 год"
-          title: "1 год"
-        - payload: "3 года"
-          title: "3 года"
+        - title: "3 месяца"
+          payload: '/provide_exp{"experience_years":"0.25"}'
+        - title: "1 год"
+          payload: '/provide_exp{"experience_years":"1"}'
+        - title: "3 года"
+          payload: '/provide_exp{"experience_years":"3"}'
       button_type: vertical
     - text: "Сколько времени вы работали или практиковались с задачами, близкими к выбранной роли?"
       buttons:
-        - payload: "3 месяца"
-          title: "3 месяца"
-        - payload: "1 год"
-          title: "1 год"
-        - payload: "3 года"
-          title: "3 года"
+        - title: "3 месяца"
+          payload: '/provide_exp{"experience_years":"0.25"}'
+        - title: "1 год"
+          payload: '/provide_exp{"experience_years":"1"}'
+        - title: "3 года"
+          payload: '/provide_exp{"experience_years":"3"}'
       button_type: vertical
   utter_ask_skills:
     - text: "Какие навыки и инструменты вы чаще всего используете?"
@@ -421,268 +421,263 @@ responses:
   utter_ask_project_role:
     - text: "Какая была ваша зона ответственности в этих проектах?"
       buttons:
-        - payload: "manager"
-          title: "Менеджер"
-        - payload: "analyst"
-          title: "Аналитик"
-        - payload: "developer"
-          title: "Разработчик"
-        - payload: "lead"
-          title: "Лидер"
-        - payload: "unknown"
-          title: "Другое"
+        - title: "Управление"
+          payload: '/provide_projects{"project_role":"manager"}'
+        - title: "Аналитика"
+          payload: '/provide_projects{"project_role":"analyst"}'
+        - title: "Разработка"
+          payload: '/provide_projects{"project_role":"developer"}'
+        - title: "Лидировал"
+          payload: '/provide_projects{"project_role":"lead"}'
+        - title: "Другое"
+          payload: '/provide_projects{"project_role":"unknown"}'
       button_type: vertical
     - text: "Что именно было на вашей стороне: разработка, анализ, управление, лидерство?"
       buttons:
-        - payload: "manager"
-          title: "Менеджер"
-        - payload: "analyst"
-          title: "Аналитик"
-        - payload: "developer"
-          title: "Разработчик"
-        - payload: "lead"
-          title: "Лидер"
-        - payload: "unknown"
-          title: "Другое"
+        - title: "Управление"
+          payload: '/provide_projects{"project_role":"manager"}'
+        - title: "Аналитика"
+          payload: '/provide_projects{"project_role":"analyst"}'
+        - title: "Разработка"
+          payload: '/provide_projects{"project_role":"developer"}'
+        - title: "Лидировал"
+          payload: '/provide_projects{"project_role":"lead"}'
+        - title: "Другое"
+          payload: '/provide_projects{"project_role":"unknown"}'
       button_type: vertical
     - text: "Какую роль вы занимали в команде?"
       buttons:
-        - payload: "manager"
-          title: "Менеджер"
-        - payload: "analyst"
-          title: "Аналитик"
-        - payload: "developer"
-          title: "Разработчик"
-        - payload: "lead"
-          title: "Лидер"
-        - payload: "unknown"
-          title: "Другое"
+        - title: "Управление"
+          payload: '/provide_projects{"project_role":"manager"}'
+        - title: "Аналитика"
+          payload: '/provide_projects{"project_role":"analyst"}'
+        - title: "Разработка"
+          payload: '/provide_projects{"project_role":"developer"}'
+        - title: "Лидировал"
+          payload: '/provide_projects{"project_role":"lead"}'
+        - title: "Другое"
+          payload: '/provide_projects{"project_role":"unknown"}'
       button_type: vertical
     - text: "Уточню вашу роль в проекте: за что отвечали лично вы?"
       buttons:
-        - payload: "manager"
-          title: "Менеджер"
-        - payload: "analyst"
-          title: "Аналитик"
-        - payload: "developer"
-          title: "Разработчик"
-        - payload: "lead"
-          title: "Лидер"
-        - payload: "unknown"
-          title: "Другое"
+        - title: "Управление"
+          payload: '/provide_projects{"project_role":"manager"}'
+        - title: "Аналитика"
+          payload: '/provide_projects{"project_role":"analyst"}'
+        - title: "Разработка"
+          payload: '/provide_projects{"project_role":"developer"}'
+        - title: "Лидировал"
+          payload: '/provide_projects{"project_role":"lead"}'
+        - title: "Другое"
+          payload: '/provide_projects{"project_role":"unknown"}'
       button_type: vertical
     - text: "Окей, а ваша часть была ближе к анализу, разработке, управлению или лидерству?"
       buttons:
-        - payload: "manager"
-          title: "Менеджер"
-        - payload: "analyst"
-          title: "Аналитик"
-        - payload: "developer"
-          title: "Разработчик"
-        - payload: "lead"
-          title: "Лидер"
-        - payload: "unknown"
-          title: "Другое"
+        - title: "Управление"
+          payload: '/provide_projects{"project_role":"manager"}'
+        - title: "Аналитика"
+          payload: '/provide_projects{"project_role":"analyst"}'
+        - title: "Разработка"
+          payload: '/provide_projects{"project_role":"developer"}'
+        - title: "Лидировал"
+          payload: '/provide_projects{"project_role":"lead"}'
+        - title: "Другое"
+          payload: '/provide_projects{"project_role":"unknown"}'
       button_type: vertical
   utter_ask_education_text:
     - text: "Расскажите про образование или профильную подготовку."
-      buttons:
     - text: "Есть ли у вас профильное образование, курсы или сертификаты?"
-      buttons:
     - text: "Какая подготовка помогает вам в этой роли?"
-      buttons:
     - text: "Окей, теперь про образование: что из учебы, курсов или сертификатов важно учесть?"
-      buttons:
     - text: "Перейдем к подготовке. Какое образование или обучение связано с этой ролью?"
-      buttons:
   utter_ask_english_level:
     - text: "Как оцениваете свой английский?"
       buttons:
-        - payload: "b1"
-          title: "b1"
-        - payload: "b2"
-          title: "b2"
-        - payload: "c1"
-          title: "c1"
+        - title: "B1"
+          payload: '/provide_english{"english_level":"b1"}'
+        - title: "B2"
+          payload: '/provide_english{"english_level":"b2"}'
+        - title: "C1"
+          payload: '/provide_english{"english_level":"c1"}'
     - text: "Насколько комфортно читать документацию и общаться на английском?"
       buttons:
-        - payload: "b1"
-          title: "b1"
-        - payload: "b2"
-          title: "b2"
-        - payload: "c1"
-          title: "c1"
+        - title: "B1"
+          payload: '/provide_english{"english_level":"b1"}'
+        - title: "B2"
+          payload: '/provide_english{"english_level":"b2"}'
+        - title: "C1"
+          payload: '/provide_english{"english_level":"c1"}'
     - text: "Какой примерно уровень английского можно указать?"
       buttons:
-        - payload: "b1"
-          title: "b1"
-        - payload: "b2"
-          title: "b2"
-        - payload: "c1"
-          title: "c1"
+        - title: "B1"
+          payload: '/provide_english{"english_level":"b1"}'
+        - title: "B2"
+          payload: '/provide_english{"english_level":"b2"}'
+        - title: "C1"
+          payload: '/provide_english{"english_level":"c1"}'
     - text: "Теперь английский: насколько спокойно читаете документацию и переписываетесь?"
       buttons:
-        - payload: "b1"
-          title: "b1"
-        - payload: "b2"
-          title: "b2"
-        - payload: "c1"
-          title: "c1"
+        - title: "B1"
+          payload: '/provide_english{"english_level":"b1"}'
+        - title: "B2"
+          payload: '/provide_english{"english_level":"b2"}'
+        - title: "C1"
+          payload: '/provide_english{"english_level":"c1"}'
     - text: "Уточню английский. Какой уровень ближе всего: A1-C2 или можно описать словами?"
       buttons:
-        - payload: "b1"
-          title: "b1"
-        - payload: "b2"
-          title: "b2"
-        - payload: "c1"
-          title: "c1"
+        - title: "B1"
+          payload: '/provide_english{"english_level":"b1"}'
+        - title: "B2"
+          payload: '/provide_english{"english_level":"b2"}'
+        - title: "C1"
+          payload: '/provide_english{"english_level":"c1"}'
   utter_ask_work_format:
     - text: "Какой формат работы вам подходит: офис, удаленно, гибрид или любой вариант?"
       buttons:
-        - payload: "офис"
-          title: "офис"
-        - payload: "analудаленноyst"
-          title: "удаленно"
-        - payload: "гибрид"
-          title: "гибрид"
-        - payload: "любой вариант"
-          title: "любой вариант"
+        - title: "Офис"
+          payload: '/provide_work_format{"work_format":"office"}'
+        - title: "Удаленно"
+          payload: '/provide_work_format{"work_format":"remote"}'
+        - title: "Гибрид"
+          payload: '/provide_work_format{"work_format":"hybrid"}'
+        - title: "Без разницы"
+          payload: '/provide_work_format{"work_format":"any"}'
       button_type: vertical
     - text: "Какой формат рассматриваете: офис, удаленно, гибрид?"
       buttons:
-        - payload: "офис"
-          title: "офис"
-        - payload: "analудаленноyst"
-          title: "удаленно"
-        - payload: "гибрид"
-          title: "гибрид"
-        - payload: "любой вариант"
-          title: "любой вариант"
+        - title: "Офис"
+          payload: '/provide_work_format{"work_format":"office"}'
+        - title: "Удаленно"
+          payload: '/provide_work_format{"work_format":"remote"}'
+        - title: "Гибрид"
+          payload: '/provide_work_format{"work_format":"hybrid"}'
+        - title: "Без разницы"
+          payload: '/provide_work_format{"work_format":"any"}'
       button_type: vertical
     - text: "Какой режим работы был бы комфортным: офис, удаленка, гибрид или без разницы?"
       buttons:
-        - payload: "офис"
-          title: "офис"
-        - payload: "analудаленноyst"
-          title: "удаленно"
-        - payload: "гибрид"
-          title: "гибрид"
-        - payload: "любой вариант"
-          title: "любой вариант"
+        - title: "Офис"
+          payload: '/provide_work_format{"work_format":"office"}'
+        - title: "Удаленно"
+          payload: '/provide_work_format{"work_format":"remote"}'
+        - title: "Гибрид"
+          payload: '/provide_work_format{"work_format":"hybrid"}'
+        - title: "Без разницы"
+          payload: '/provide_work_format{"work_format":"any"}'
       button_type: vertical
     - text: "Окей, по формату: офис, удаленка, гибрид или без разницы?"
       buttons:
-        - payload: "офис"
-          title: "офис"
-        - payload: "analудаленноyst"
-          title: "удаленно"
-        - payload: "гибрид"
-          title: "гибрид"
-        - payload: "любой вариант"
-          title: "любой вариант"
+        - title: "Офис"
+          payload: '/provide_work_format{"work_format":"office"}'
+        - title: "Удаленно"
+          payload: '/provide_work_format{"work_format":"remote"}'
+        - title: "Гибрид"
+          payload: '/provide_work_format{"work_format":"hybrid"}'
+        - title: "Без разницы"
+          payload: '/provide_work_format{"work_format":"any"}'
       button_type: vertical
     - text: "Какой формат для вас реалистичен на постоянной основе: офис, удаленно или гибрид?"
       buttons:
-        - payload: "офис"
-          title: "офис"
-        - payload: "удаленно"
-          title: "удаленно"
-        - payload: "гибрид"
-          title: "гибрид"
-        - payload: "любой вариант"
-          title: "любой вариант"
+        - title: "Офис"
+          payload: '/provide_work_format{"work_format":"office"}'
+        - title: "Удаленно"
+          payload: '/provide_work_format{"work_format":"remote"}'
+        - title: "Гибрид"
+          payload: '/provide_work_format{"work_format":"hybrid"}'
+        - title: "Без разницы"
+          payload: '/provide_work_format{"work_format":"any"}'
       button_type: vertical
   utter_ask_salary_expectation_min:
     - text: "Какую зарплату вы рассматриваете?"
       buttons:
-        - payload: "50к-100к"
-          title: "50к-100к"
-        - payload: "100к-200к"
-          title: "100к-200к"
-        - payload: "200к-500к"
-          title: "200к-500к"
+        - title: "50к-100к"
+          payload: '/provide_salary{"salary_amount":"50к-100к"}'
+        - title: "100к-200к"
+          payload: '/provide_salary{"salary_amount":"100к-200к"}'
+        - title: "200к-500к"
+          payload: '/provide_salary{"salary_amount":"200к-500к"}'
       button_type: vertical
     - text: "Какая зарплатная вилка была бы для вас комфортной?"
       buttons:
-        - payload: "50к-100к"
-          title: "50к-100к"
-        - payload: "100к-200к"
-          title: "100к-200к"
-        - payload: "200к-500к"
-          title: "200к-500к"
+        - title: "50к-100к"
+          payload: '/provide_salary{"salary_amount":"50к-100к"}'
+        - title: "100к-200к"
+          payload: '/provide_salary{"salary_amount":"100к-200к"}'
+        - title: "200к-500к"
+          payload: '/provide_salary{"salary_amount":"200к-500к"}'
       button_type: vertical
     - text: "Какие зарплатные ожидания?"
       buttons:
-        - payload: "50к-100к"
-          title: "50к-100к"
-        - payload: "100к-200к"
-          title: "100к-200к"
-        - payload: "200к-500к"
-          title: "200к-500к"
+        - title: "50к-100к"
+          payload: '/provide_salary{"salary_amount":"50к-100к"}'
+        - title: "100к-200к"
+          payload: '/provide_salary{"salary_amount":"100к-200к"}'
+        - title: "200к-500к"
+          payload: '/provide_salary{"salary_amount":"200к-500к"}'
       button_type: vertical
     - text: "Теперь про зарплату: какую вилку вы рассматриваете?"
       buttons:
-        - payload: "50к-100к"
-          title: "50к-100к"
-        - payload: "100к-200к"
-          title: "100к-200к"
-        - payload: "200к-500к"
-          title: "200к-500к"
+        - title: "50к-100к"
+          payload: '/provide_salary{"salary_amount":"50к-100к"}'
+        - title: "100к-200к"
+          payload: '/provide_salary{"salary_amount":"100к-200к"}'
+        - title: "200к-500к"
+          payload: '/provide_salary{"salary_amount":"200к-500к"}'
       button_type: vertical
     - text: "Сориентируйте по зарплатным ожиданиям, можно диапазоном."
       buttons:
-        - payload: "50к-100к"
-          title: "50к-100к"
-        - payload: "100к-200к"
-          title: "100к-200к"
-        - payload: "200к-500к"
-          title: "200к-500к"
+        - title: "50к-100к"
+          payload: '/provide_salary{"salary_amount":"50к-100к"}'
+        - title: "100к-200к"
+          payload: '/provide_salary{"salary_amount":"100к-200к"}'
+        - title: "200к-500к"
+          payload: '/provide_salary{"salary_amount":"200к-500к"}'
       button_type: vertical
   utter_ask_availability:
     - text: "Когда сможете приступить?"
       buttons:
-        - payload: "завтра"
-          title: "завтра"
-        - payload: "в этом месяце"
-          title: "в этом месяце"
-        - payload: "в следующем месяце"
-          title: "в следующем месяце"
+        - title: "Завтра"
+          payload: '/provide_availability{"availability":"available_now"}'
+        - title: "В этом месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
+        - title: "В следующем месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
       button_type: vertical
     - text: "Когда вы готовы выйти на работу?"
       buttons:
-        - payload: "завтра"
-          title: "завтра"
-        - payload: "в этом месяце"
-          title: "в этом месяце"
-        - payload: "в следующем месяце"
-          title: "в следующем месяце"
+        - title: "Завтра"
+          payload: '/provide_availability{"availability":"available_now"}'
+        - title: "В этом месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
+        - title: "В следующем месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
       button_type: vertical
     - text: "Какие сроки выхода для вас реалистичны?"
       buttons:
-        - payload: "завтра"
-          title: "завтра"
-        - payload: "в этом месяце"
-          title: "в этом месяце"
-        - payload: "в следующем месяце"
-          title: "в следующем месяце"
+        - title: "Завтра"
+          payload: '/provide_availability{"availability":"available_now"}'
+        - title: "В этом месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
+        - title: "В следующем месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
       button_type: vertical
     - text: "И последний организационный момент: когда сможете выйти?"
       buttons:
-        - payload: "завтра"
-          title: "завтра"
-        - payload: "в этом месяце"
-          title: "в этом месяце"
-        - payload: "в следующем месяце"
-          title: "в следующем месяце"
+        - title: "Завтра"
+          payload: '/provide_availability{"availability":"available_now"}'
+        - title: "В этом месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
+        - title: "В следующем месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
       button_type: vertical
     - text: "Когда потенциально готовы начать работу, если все совпадет?"
       buttons:
-        - payload: "завтра"
-          title: "завтра"
-        - payload: "в этом месяце"
-          title: "в этом месяце"
-        - payload: "в следующем месяце"
-          title: "в следующем месяце"
+        - title: "Завтра"
+          payload: '/provide_availability{"availability":"available_now"}'
+        - title: "В этом месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
+        - title: "В следующем месяце"
+          payload: '/provide_availability{"availability":"available_soon"}'
       button_type: vertical
   utter_roles:
     - text: "Сейчас открыты направления Project Manager, Data Analyst, Data Engineer, Data Scientist и MLOps Engineer. Можем начать с того, которое вам ближе."

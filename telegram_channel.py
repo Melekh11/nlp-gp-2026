@@ -48,12 +48,7 @@ class FixedTelegramInput(TelegramInput):
                 await out_channel.edit_message_reply_markup(
                     msg.chat.id,
                     msg.message_id,
-                    reply_markup=None  # Убираем клавиатуру
-                )
-
-                await out_channel.send_text_message(
-                    msg.chat.id,
-                    f"Вы выбрали: {text}"
+                    reply_markup=None
                 )
             elif self._is_edited_message(update):
                 msg = update.edited_message
